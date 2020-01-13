@@ -17,7 +17,7 @@ public class Circle {
 	}
 	
 	/**
-	 * Change the radius of the ricle
+	 * Change the radius of the circle
 	 * @param radius The new radius of the circle
 	 */
 	public void setRadius(double radius) {

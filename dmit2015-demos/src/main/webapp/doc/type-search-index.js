@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"ca.nait.dmit.domain","l":"Circle"}]
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"ca.nait.dmit.domain","l":"Calculator"},{"p":"ca.nait.dmit.domain","l":"Circle"},{"p":"ca.nait.dmit","l":"JAXRSConfiguration"},{"p":"ca.nait.dmit.domain","l":"ProgrammingLanguageTest"},{"p":"ca.nait.dmit","l":"SampleResource"},{"p":"ca.nait.dmit","l":"SampleTest"}]
