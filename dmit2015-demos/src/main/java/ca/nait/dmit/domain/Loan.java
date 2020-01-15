@@ -4,16 +4,21 @@ import org.apache.commons.math3.util.Precision;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class Loan {
 
 	private double mortgageAmount;
 	private double annualInterestRate;
 	private int amortizationPeriod;
+	
+	public Loan() {
+		super();
+		mortgageAmount = 250000;
+		annualInterestRate = 5.29;
+		amortizationPeriod = 25;
+	}
 	
 	public double monthlyPayment() {
 		double amount = 0;
