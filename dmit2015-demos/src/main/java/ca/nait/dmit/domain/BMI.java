@@ -4,7 +4,7 @@ package ca.nait.dmit.domain;
  * This class is use to calculate a person's body mass index (BMI) and their BMI
  * Category.
  * 
- * @author yourFirstName yourLastName
+ * @author Sam Wu
  * @version 2015.01.16
  */
 public class BMI {
@@ -63,31 +63,36 @@ public class BMI {
 	/**
 	 * Determines the BMI Category of the person using their BMI value and comparing
 	 * it against the following table.
-	 * <table>
-	 * <thead>
-	 * <tr>
-	 * <th>BMI Range</th>
-	 * <th>BMI Category</th>
-	 * </tr>
-	 * </thead> <tbody>
-	 * <tr>
-	 * <td>< 18.5</td>
-	 * <td>underweight</td>
-	 * </tr>
-	 * <tr>
-	 * <td>>= 18.5 and < 25</td>
-	 * <td>normal</td>
-	 * </tr>
-	 * <tr>
-	 * <td>>= 25 and < 30</td>
-	 * <td>overweight</td> *
-	 * </tr>
-	 * <tr>
-	 * <td>>= 30</td>
-	 * <td>obese</td>
-	 * </tr>
-	 * </tbody>
-	 * </table>
+	 * 
+	 * 
+<table>
+<caption>BMI Category</caption>
+<thead>
+	 <tr>
+		<th>BMI Range</th>
+		<th>BMI Category</th>
+	</tr>
+</thead>
+<tbody>
+	 <tr>
+	 	<td>&lt; 18.5</td>
+	 	<td>underweight</td>
+	 </tr>
+	 <tr>
+	 	<td>&gt;= 18.5 and &lt; 25</td>
+	 	<td>normal</td>
+	 </tr>
+	 <tr>
+	 	<td>&gt;= 25 and &lt; 30</td>
+	 	<td>overweight</td>
+	 </tr>
+	 <tr>
+	 	<td>&gt;= 30</td>
+	 	<td>obese</td>
+	 </tr>
+</tbody>
+</table>	 	 
+	 *
 	 *
 	 * @return one of following: underweight, normal, overweight, obese.
 	 */

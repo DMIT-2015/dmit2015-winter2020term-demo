@@ -11,7 +11,10 @@ public class Circle {
 	/** The radius of the circle */
 	private double radius;	
 	
-	/** Return the radius of the circle */
+	/** Return the radius of the circle 
+	 * 
+	 * @return The radius of the circle
+	 * */
 	public double getRadius() {
 		return radius;
 	}
@@ -28,8 +31,11 @@ public class Circle {
 		}
 	}	
 
-	
-	/** Construct a circle with a specified radius */
+	/**
+	 * 	Construct a circle with a specified radius 
+	 * 
+	 * @param newRadius The new radius of the circle
+	 */
 	public Circle(double newRadius) {
 		radius = newRadius;
 	}
