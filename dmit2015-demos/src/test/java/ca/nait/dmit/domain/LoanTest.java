@@ -7,14 +7,20 @@ import org.junit.jupiter.api.Test;
 class LoanTest {
 
 	@Test
-	public void testGetMonthyPayment() {
+	void testMonthlyPayment1() {
 		Loan loanBean = new Loan(250000, 5.29, 25);
 		assertEquals(1495.56, loanBean.monthlyPayment(), 0.00);
-
-		loanBean = new Loan(250000, 3.09, 25);
+	}
+	
+	@Test
+	void testMonthlyPayment2() {
+		Loan loanBean = new Loan(250000, 3.09, 25);
 		assertEquals(1194.69, loanBean.monthlyPayment(), 0.00);
-
-		loanBean = new Loan(250000, 5.29, 20);
+	}
+	
+	@Test
+	void testMonthlyPayment3() {
+		Loan loanBean = new Loan(250000, 5.29, 20);
 		assertEquals(1682.18, loanBean.monthlyPayment(), 0.00);
 	}
 	
