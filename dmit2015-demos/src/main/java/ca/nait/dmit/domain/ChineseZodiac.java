@@ -1,5 +1,11 @@
 package ca.nait.dmit.domain;
 
+/**
+ * This class is used to determine the Chinese Zodiac animal of a person given their name and birth year
+ * 
+ * @author Sam Wu
+ * @version 2020.01.13
+ */
 public class ChineseZodiac {
 
 	// Declare data fields to store data
@@ -32,6 +38,7 @@ public class ChineseZodiac {
 	// Declare instance-level methods that perform operations using data fields
 	public String getAnimal() {
 		String animal = "Unknown";
+		
 		String[] animals = {
 			"Rat",
 			"Ox",

@@ -98,7 +98,8 @@ public class BMI {
 	 */
 
 	public String getCategory() {
-		String category = "obese";
+		String category = "unknown";
+		
 		final double bmiValue = getBMI();
 		if (bmiValue < 18.5) {
 			category = "underweight";
@@ -109,6 +110,7 @@ public class BMI {
 		} else {
 			category = "obese";
 		}
+		
 		return category;
 	}
 
