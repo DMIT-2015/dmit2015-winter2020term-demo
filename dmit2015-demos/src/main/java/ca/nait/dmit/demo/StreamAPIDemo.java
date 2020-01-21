@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.bytebuddy.dynamic.scaffold.MethodGraph.Linked;
 
 /**
  * Demonstration on how to use the Java 8+ Stream API.
