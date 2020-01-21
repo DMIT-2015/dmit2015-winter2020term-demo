@@ -1,9 +1,16 @@
 package ca.nait.dmit.demo;
 
+
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -13,46 +20,47 @@ import lombok.Data;
 /**
  * Demonstration on how to use the Java 8+ Stream API.
  * 
- * The methods in the Stream interface are divided into three groups:
- * intermediate methods, terminal methods, class-level (static) methods. An
- * intermediate method transforms the stream into another stream. A terminal
- * method returns a result or performs actions. After a terminal method is
- * executed, the stream is closed automatically. A class-level (static) method
- * creates a stream.
+ * The methods in the Stream interface are divided into three groups: 
+ * 		intermediate methods, 
+ * 		terminal methods, 
+ * 		class-level (static) methods.
+ * An intermediate method transforms the stream into another stream.
+ * A terminal method returns a result or performs actions. After a terminal method is executed, the stream is closed automatically.
+ * A class-level (static) method creates a stream.
  * 
- * Intermediate operation methods: distinct - Return a stream consisting of
- * distinct elements from the stream skip - Return a stream consisting of the
- * remaining elements in this stream after discarding the first n elements limit
- * - Return a stream consisting of the first n elements from this stream filter
- * - Return a stream consisting of the elements pass the test implemented by the
- * function sorted - Return a stream consisting of the elements of this stream
- * sorted by natural order or by a comparator function map - Return a stream
- * consisting of the results of applying the functions to the elements in the
- * stream
+ * Intermediate operation methods:
+ *		distinct 	- Return a stream consisting of distinct elements from the stream
+ * 		skip 		- Return a stream consisting of the remaining elements in this stream after discarding the first n elements
+ *		limit 		- Return a stream consisting of the first n elements from this stream
+ *		filter 		- Return a stream consisting of the elements pass the test implemented by the function
+ * 		sorted 		- Return a stream consisting of the elements of this stream sorted by natural order or by a comparator function
+ * 		map 		- Return a stream consisting of the results of applying the functions to the elements in the stream
  * 
- * Terminal operation methods: count - Return the number of elements in the
- * stream max - Return the maximum element in this stream based on the
- * comparator min - Return the minimum element in this stream based on the
- * comparator findFirst - Return the first element from this stream findAny -
- * Return any element from this stream allMatch - Return true if all the
- * elements in this stream match the predicate anyMatch - Return true if one
- * element in this stream matches the predicate noneMatch - Return true if no
- * element in this stream matchies the predicate forEach - Execute the provided
- * function once for each element in the stream reduce - Reduces the elements in
- * this stream to a value using the identity and an associative accumulation
- * function. Returns an Optional resutl of an accumulation operation using the
- * values in the stream. collect - Perform a mutable reducation operation ont
- * the elements of this stream using a Collector toArray - Return an array
- * consisting of the elements in this stream
+ * Terminal operation methods:
+ * 		count 		- Return the number of elements in the stream
+ * 		max 		- Return the maximum element in this stream based on the comparator
+ * 		min 		- Return the minimum element in this stream based on the comparator
+ * 		findFirst 	- Return the first element from this stream
+ * 		findAny 	- Return any element from this stream
+ * 		allMatch 	- Return true if all the elements in this stream match the predicate
+ * 		anyMatch 	- Return true if one element in this stream matches the predicate 
+ * 		noneMatch 	- Return true if no element in this stream matchies the predicate
+ * 		forEach 	- Execute the provided function once for each element in the stream
+ * 		reduce 		- Reduces the elements in this stream to a value using the identity and an associative accumulation function. 
+ * 						Returns an Optional resutl of an accumulation operation using the values in the stream.
+ *		collect 	- Perform a mutable reducation operation ont the elements of this stream using a Collector
+ *		toArray 	- Return an array consisting of the elements in this stream
  * 
- * Class-level (static) methods: empty - Return an empty sequential stream of -
- * Return a stream consisting of the specified values concat
+ * Class-level (static) methods:
+ * 		empty		- Return an empty sequential stream
+ * 		of			- Return a stream consisting of the specified values
+ * 		concat
  *
  *
- * The methods are invokes using a stream pipeline that consist of a
- * source(e.g., a list, a set, or an array), a method that creates a stream,
- * zero or more intermediate methods, and a final terminal method. Example:
- * set.stream().limit(10).distinct().count()
+ * 	The methods are invokes using a stream pipeline that consist of a source(e.g., a list, a set, or an array),
+ * 	a method that creates a stream, zero or more intermediate methods, and a final terminal method.
+ *	Example: 
+ *		set.stream().limit(10).distinct().count()
  *
  */
 
@@ -122,12 +130,92 @@ public class StreamAPIDemo {
 		}
 		
 		// Any games less than $20?
+		boolean isAnyGameLessThan20 = games.stream().anyMatch(item -> item.getPrice() < 20);
+		System.out.println("Any games less than $20 " + isAnyGameLessThan20);		
+		
 		// All games less than $50?
+		boolean isAllGamesLessThan50 = games.stream().allMatch(item -> item.getPrice() < 50);
+		System.out.println("All games less than $50 " + isAllGamesLessThan50);		
+		
 		// No PC Games on sale?
+		boolean isNoPCGamesOnSale = games.stream().noneMatch(item -> item.getPlatform().equalsIgnoreCase("PC Games"));
+		System.out.println("No PC Games for sale " + isNoPCGamesOnSale);
 		
 		// sum, max, min in a Stream
+		double sumNintendoGamePrice = games.stream()
+				.filter(item -> item.getPlatform().equalsIgnoreCase("Nintendo"))
+				.mapToDouble(VideoGame::getPrice)
+				.sum();
+		System.out.println("The sum of all Nintendo games is: " + sumNintendoGamePrice);
+		double maxNintendoGamePrice = games.stream()
+				.filter(item -> item.getPlatform().equalsIgnoreCase("Nintendo"))
+				.mapToDouble(VideoGame::getPrice)
+				.max()
+				.orElse(99.99);
+		System.out.println("The maximum price for a Nintendo game on sale is: " + maxNintendoGamePrice);
+		double minNintendoGamePrice = games.stream()
+				.filter(item -> item.getPlatform().equalsIgnoreCase("Nintendo"))
+				.mapToDouble(VideoGame::getPrice)
+				.min()
+				.orElse(0.00);
+		System.out.println("The minimum price for a Nintendo game on sale is: " + minNintendoGamePrice);
+		
+		double sumPlaystationGamePrice = games.stream()
+				.filter(item -> item.getPlatform().equalsIgnoreCase("Playstation"))
+				.map(VideoGame::getPrice)
+				.reduce(0.0, (item1, item2) -> item1 + item2);
+		System.out.println("The sum of all Playstation games is: " + sumPlaystationGamePrice);
+		double maxPlaystationGamePrice = games.stream()
+				.filter(item -> item.getPlatform().equalsIgnoreCase("Playstation"))
+				.map(VideoGame::getPrice)
+				.reduce(Double::max)
+				.orElse(99.99);
+		System.out.println("The maximum price for a Playstation game on sale is: " + maxPlaystationGamePrice);
+		double minPlaystationGamePrice = games.stream()
+				.filter(item -> item.getPlatform().equalsIgnoreCase("Playstation"))
+				.map(VideoGame::getPrice)
+				.reduce(Double::min)
+				.orElse(0.00);
+		System.out.println("The minimum price for a Playstation game on sale is: " + minPlaystationGamePrice);
 		
 		// Collecting the result of a stream
+		// Double the price for each game and collect the result in a List
+//		List<VideoGame> doublePriceGames = games.stream()
+//			.map(item -> {
+//				item.setPrice( item.getPrice() * 2);
+//				return item;
+//			})
+//			.collect(Collectors.toList());
+//		doublePriceGames.stream().forEach(System.out::println);
+		
+		// Collect the result in a Set		
+		Set<Double> uniquePrices = games.stream()
+				.map(VideoGame::getPrice)
+				.collect(Collectors.toSet());
+		uniquePrices.stream().forEach(System.out::println);
+		System.out.println("\n\n");
+		
+		// Collect the result in a sorted Set (TreeSet)
+		uniquePrices = games.stream()
+				.map(VideoGame::getPrice)
+				.collect(Collectors.toCollection(TreeSet::new));
+		uniquePrices.stream().forEach(System.out::println);
+		System.out.println("\n\n");
+		
+		// Collect the result in a Map with title for key and price for value
+		Map<String, Double> titleMap = games.stream()
+				.collect(Collectors.toMap(VideoGame::getTitle, VideoGame::getPrice));
+		titleMap.entrySet().stream().forEach(item -> System.out.println(item.getKey() + ":" + item.getValue()));
+		System.out.println("\n\n");
+		
+		// Collect the result in a sorted Map with title for key and price for value
+		Map<String, Double> sortedTitleMap = games.stream()
+				.sorted(Comparator.comparingDouble(VideoGame::getPrice).reversed())
+				.collect(Collectors.toMap(VideoGame::getTitle, VideoGame::getPrice, 
+						(oldValue, newValue) -> oldValue, // To avoid duplicate key by choosing the oldValue in case of a key collision
+						LinkedHashMap::new));
+		sortedTitleMap.entrySet().stream().forEach(item -> System.out.println(item.getKey() + ":" + item.getValue()));
+		System.out.println("\n\n");
 		
 		// Summarization collectors
 		
