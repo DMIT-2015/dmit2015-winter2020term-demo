@@ -22,7 +22,8 @@ public class DemoReadingCSVFileAsAnObject {
 		
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 		
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/data/EPS_Online_Crime_Reporting.csv"))) ) {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+				getClass().getResourceAsStream("/data/EPS_Online_Crime_Reporting.csv"))) ) {
 			String line;
 			final String delimiter = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
 			// Skip the first line as it is containing column headings

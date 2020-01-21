@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -20,7 +21,8 @@ import lombok.Data;
  * executed, the stream is closed automatically. A class-level (static) method
  * creates a stream.
  * 
- * Intermediate operation methods: distinct - Return a stream consisting of
+ * Intermediate operation methods: 
+ * 		distinct - Return a stream consisting of 
  * distinct elements from the stream skip - Return a stream consisting of the
  * remaining elements in this stream after discarding the first n elements limit
  * - Return a stream consisting of the first n elements from this stream filter
@@ -122,14 +124,30 @@ public class StreamAPIDemo {
 		}
 		
 		// Any games less than $20?
+		boolean isAnyGameLessThan20 = games.stream().anyMatch(item -> item.getPrice() < 20);
+		System.out.println("Any games less than $20 " + isAnyGameLessThan20);								
 		// All games less than $50?
+		boolean isAllGamesLessThan50 = games.stream().allMatch(item -> item.getPrice() < 50);
+		System.out.println("All games less than $50 " + isAllGamesLessThan50);		
 		// No PC Games on sale?
+		boolean isNoPCGamesOnSale = games.stream().noneMatch(item -> item.getPlatform().equalsIgnoreCase("PC Games"));
+		System.out.println("No PC Games for sale " + isNoPCGamesOnSale);
 		
 		// sum, max, min in a Stream
-		
+		// Display the total of all Nintendo games on sale
+		double totalNintendoGamePrices = games.stream()
+				.filter(item -> item.getPlatform().equalsIgnoreCase("Nintendo"))
+				.mapToDouble(VideoGame::getPrice)
+				.sum();
+		System.out.println("The total of all Nintendo games is: " + totalNintendoGamePrices);
 		// Collecting the result of a stream
 		
 		// Summarization collectors
+		// Display the total of all XBOX games on sale
+		double totalXboxGamePrices = games.stream()
+				.filter(item -> item.getPlatform().equalsIgnoreCase("Xbox"))
+				.collect(Collectors.summingDouble(VideoGame::getPrice));
+		System.out.println("The total of all Xbox game is " + totalXboxGamePrices);
 		
 		// Grouping
 		
@@ -138,80 +156,80 @@ public class StreamAPIDemo {
 	static void demoProcessingValues() {
 		// Generate exactly 7 values in the range of [1..50].
 		IntStream lottoMaxStream = new Random().ints(7, 1, 50);
-		lottoMaxStream.forEach(System.out::println);
+		lottoMaxStream.sorted().forEach(System.out::println);
 		
-		// Declare and initial an array of game titles
-		List<String> games = Arrays.asList(
-			"Mario Kart 8 Deluxe", 
-			"Super Mario Party", 
-			"Super Mario Odyssey",
-			"New Super Mario Bros. U Deluxe", 
-			"Mario & Sonic at the Olympic Games: Tokyo 2020",
-			"Super Mario Maker 2", 
-			"Mario + Rabbids Kingdom Battle", 
-			"Luigi's Mansion 3", 
-			"Mario Tennis Aces",
-			"Super Smash Bros Ultimate", 
-			"Mario Kart 8 Deluxe"
-		);
-
-		// forEach demo
-		System.out.println("The first five games are: ");
-		games.stream()
-			.limit(5)
-			.sorted()
-			.forEach(instance -> System.out.println(instance + " "));
-
-		// skip and sorted demo
-		System.out.println("\nThe games after the first five games sorted are: ");
-		games.stream()
-			.skip(5)
-			.sorted((lhs, rhs) -> lhs.compareToIgnoreCase(rhs))
-			.forEach(System.out::println);
-
-		// method reference demo
-		System.out.println("\nThe games after the first five games sorted using method reference are: ");
-		games.stream()
-			.skip(5)
-			.sorted(String::compareToIgnoreCase)
-			.forEach(item -> System.out.println(item + " "));
-
-		// filter demo
-		System.out.print("\nThe game title with Super keyword: \n");
-		games.stream()
-			.filter(instance -> instance.contains("Super"))
-			.forEach(instance -> System.out.println(instance + " "));
-
-		// get demo
-		System.out.print("\nThe shortest game title: " + games.stream().max(String::compareTo).get());
-		System.out.print("\nThe longest game title: " + games.stream().min(String::compareTo).get());
-
-		// anyMatch demo
-		System.out.println("\nGames with contain the Mario title? "
-				+ Stream.of(games).anyMatch(instance -> instance.contains("Mario")));
-
-		// allMatch demo
-		System.out.println(
-				"\nAll games contains Mario? " + games.stream().allMatch(instance -> instance.contains("Mario")));
-
-		// noneMatch demo
-		System.out.println(
-				"\nNo games start with Mario? " + games.stream().noneMatch(instance -> instance.startsWith("Mario")));
-
-		// distinct demo
-		System.out.println("\nNumber of distinct game titles: " + games.stream().distinct().count());
-
-		// findFirst demo
-		System.out.println("\nFirst game title that starts with Super Mario in lower case: " + games.stream()
-				.filter(instance -> instance.startsWith("Super Mario")).map(String::toLowerCase).findFirst().get());
-
-		// findAny demo
-		System.out.println("\nAny game title with Bros: "
-				+ games.stream().filter(instance -> instance.contains("Bros")).findAny().get());
-
-		// toArray demo
-		Object[] superMarioTitles = games.stream().filter(instance -> instance.contains("Super Mario")).toArray();
-		System.out.println(Arrays.toString(superMarioTitles));
+//		// Declare and initial an array of game titles
+//		List<String> games = Arrays.asList(
+//			"Mario Kart 8 Deluxe", 
+//			"Super Mario Party", 
+//			"Super Mario Odyssey",
+//			"New Super Mario Bros. U Deluxe", 
+//			"Mario & Sonic at the Olympic Games: Tokyo 2020",
+//			"Super Mario Maker 2", 
+//			"Mario + Rabbids Kingdom Battle", 
+//			"Luigi's Mansion 3", 
+//			"Mario Tennis Aces",
+//			"Super Smash Bros Ultimate", 
+//			"Mario Kart 8 Deluxe"
+//		);
+//
+//		// forEach demo
+//		System.out.println("The first five games are: ");
+//		games.stream()
+//			.limit(5)
+//			.sorted()
+//			.forEach(instance -> System.out.print(instance + ", "));
+//
+//		// skip and sorted demo
+//		System.out.println("\nThe games after the first five games sorted are: ");
+//		games.stream()
+//			.skip(5)
+//			.sorted((lhs, rhs) -> lhs.compareToIgnoreCase(rhs))
+//			.forEach(System.out::println);
+//
+//		// method reference demo
+//		System.out.println("\nThe games after the first five games sorted using method reference are: ");
+//		games.stream()
+//			.skip(5)
+//			.sorted(String::compareToIgnoreCase)
+//			.forEach(item -> System.out.println(item + " "));
+//
+//		// filter demo
+//		System.out.print("\nThe game title with Super keyword: \n");
+//		games.stream()
+//			.filter(instance -> instance.contains("Super"))
+//			.forEach(instance -> System.out.println(instance + " "));
+//
+//		// get demo
+//		System.out.print("\nThe shortest game title: " + games.stream().max(String::compareTo).get());
+//		System.out.print("\nThe longest game title: " + games.stream().min(String::compareTo).get());
+//
+//		// anyMatch demo
+//		System.out.println("\nGames with contain the Mario title? "
+//				+ Stream.of(games).anyMatch(instance -> instance.contains("Mario")));
+//
+//		// allMatch demo
+//		System.out.println(
+//				"\nAll games contains Mario? " + games.stream().allMatch(instance -> instance.contains("Mario")));
+//
+//		// noneMatch demo
+//		System.out.println(
+//				"\nNo games start with Mario? " + games.stream().noneMatch(instance -> instance.startsWith("Mario")));
+//
+//		// distinct demo
+//		System.out.println("\nNumber of distinct game titles: " + games.stream().distinct().count());
+//
+//		// findFirst demo
+//		System.out.println("\nFirst game title that starts with Super Mario in lower case: " + games.stream()
+//				.filter(instance -> instance.startsWith("Super Mario")).map(String::toLowerCase).findFirst().get());
+//
+//		// findAny demo
+//		System.out.println("\nAny game title with Bros: "
+//				+ games.stream().filter(instance -> instance.contains("Bros")).findAny().get());
+//
+//		// toArray demo
+//		Object[] superMarioTitles = games.stream().filter(instance -> instance.contains("Super Mario")).toArray();
+//		System.out.println(Arrays.toString(superMarioTitles));
 
 	}
 
