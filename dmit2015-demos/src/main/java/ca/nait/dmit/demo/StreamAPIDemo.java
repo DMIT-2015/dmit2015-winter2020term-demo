@@ -43,17 +43,17 @@ import lombok.Data;
  * 		findAny 	- Return any element from this stream
  * 		allMatch 	- Return true if all the elements in this stream match the predicate
  * 		anyMatch 	- Return true if one element in this stream matches the predicate 
- * 		noneMatch 	- Return true if no element in this stream matchies the predicate
+ * 		noneMatch 	- Return true if no element in this stream matches the predicate
  * 		forEach 	- Execute the provided function once for each element in the stream
  * 		reduce 		- Reduces the elements in this stream to a value using the identity and an associative accumulation function. 
- * 						Returns an Optional resutl of an accumulation operation using the values in the stream.
- *		collect 	- Perform a mutable reducation operation ont the elements of this stream using a Collector
+ * 						Returns an Optional result of an accumulation operation using the values in the stream.
+ *		collect 	- Perform a mutable reduction operation on the elements of this stream using a Collector
  *		toArray 	- Return an array consisting of the elements in this stream
  * 
  * Class-level (static) methods:
  * 		empty		- Return an empty sequential stream
  * 		of			- Return a stream consisting of the specified values
- * 		concat
+ * 		concat		- Returns a lazily concatenated stream 
  *
  *
  * 	The methods are invokes using a stream pipeline that consist of a source(e.g., a list, a set, or an array),
@@ -216,9 +216,17 @@ public class StreamAPIDemo {
 		sortedTitleMap.entrySet().stream().forEach(item -> System.out.println(item.getKey() + ":" + item.getValue()));
 		System.out.println("\n\n");
 		
-		// Summarization collectors
+		// Summarization Collectors: 
+		//	summingInt(), summingDouble()
+		//	reducing()
+		//	averagingInt(), averagingLong(), averagingDouble()
+		//	counting()
+		//	maxBy(), minBy()
+		//	summarizingInt(), summarizingLong(), summarizingDouble()
 		
-		// Grouping
+		// Grouping: groupingBy()
+		// Partitioning: partitioningBy()
+		// Filtering, flattening, and mapping collections: filtering(), mapping(), flatMapping(), 
 		
 	}
 
