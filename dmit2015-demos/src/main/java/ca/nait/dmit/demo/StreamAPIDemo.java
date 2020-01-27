@@ -2,6 +2,7 @@ package ca.nait.dmit.demo;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -211,21 +212,57 @@ public class StreamAPIDemo {
 		Map<String, Double> sortedTitleMap = games.stream()
 				.sorted(Comparator.comparingDouble(VideoGame::getPrice).reversed())
 				.collect(Collectors.toMap(VideoGame::getTitle, VideoGame::getPrice, 
-						(oldValue, newValue) -> oldValue, // To avoid duplicate key by choosing the oldValue in case of a key collision
+						(oldValue, newValue) -> oldValue, // Merge function used to resolve collisions between values associated with the same key
 						LinkedHashMap::new));
 		sortedTitleMap.entrySet().stream().forEach(item -> System.out.println(item.getKey() + ":" + item.getValue()));
 		System.out.println("\n\n");
 		
+		// Concatenate the elements of a stream into a String
+		String allWebCodeCsv = games.stream()
+				.map(item -> String.valueOf(item.getWebCode()))	// value must be a String
+				.sorted()
+				.collect(Collectors.joining(","));
+		System.out.println(allWebCodeCsv);
+		
 		// Summarization Collectors: 
 		//	summingInt(), summingDouble()
+		double sumPrices = games.stream()
+				.collect(Collectors.summingDouble(VideoGame::getPrice));
+		System.out.println("The total price of all games are: " + sumPrices);
 		//	reducing()
+		double sumGST = games.stream()
+				.collect(Collectors.reducing(0.0, item -> item.getPrice() * 0.05, (item1, item2) -> item1 + item2));
+		System.out.println("The total gst of all games are: " + sumGST);
+		
 		//	averagingInt(), averagingLong(), averagingDouble()
+		double averagePrice = games.stream()
+				.collect(Collectors.averagingDouble(VideoGame::getPrice));
+		System.out.println("The average price of a game is: " + averagePrice);
+		
 		//	counting()
+		double countGames = games.stream()
+				.collect(Collectors.counting());
+		System.out.println("The number of games on sale: " + countGames);
+		
 		//	maxBy(), minBy()
+		double maxPrice = games.stream()
+				.collect(Collectors.maxBy(Comparator.comparing(VideoGame::getPrice)))
+				.orElseThrow()
+				.getPrice();
+		System.out.println("The max price for a game: " + maxPrice);
+		
 		//	summarizingInt(), summarizingLong(), summarizingDouble()
+		DoubleSummaryStatistics gameStatistics = games.stream()
+				.collect(Collectors.summarizingDouble(VideoGame::getPrice));
+		System.out.println("Price statistics: " + gameStatistics);
 		
 		// Grouping: groupingBy()
+		Map<String, List<VideoGame>> groupGamesByPlattform = games.stream()
+				.collect(Collectors.groupingBy(VideoGame::getPlatform));
+		System.out.println(groupGamesByPlattform);
+		
 		// Partitioning: partitioningBy()
+		
 		// Filtering, flattening, and mapping collections: filtering(), mapping(), flatMapping(), 
 		
 	}
