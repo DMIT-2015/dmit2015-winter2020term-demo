@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Simple Calculator</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+<h1>Simple Calculator</h1>
+<form id="calculatorForm" method="post" action="../../SimpleCalculatorServlet" >
+
+<div id="messages">
+
+</div>
+
+<div class="col-auto">
+	Output result in: 
+	<div class="form-check form-check-inline">
+	  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputHtml" value="html" >
+	  <label class="form-check-label" for="outputHtml">HTML</label>
+	</div>
+	<div class="form-check form-check-inline">
+	  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputText" value="text">
+	  <label class="form-check-label" for="outputText">Text</label>
+	</div>
+	<div class="form-check form-check-inline">
+	  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputJson" value="json">
+	  <label class="form-check-label" for="outputJson">JSON</label>
+	</div>
+</div>
+
+
+<div class="form-row align-items-center">
+	<div class="col-auto">
+		<label class="sr-only" for="num1">First number:</label>
+		<input type="number" id="num1" name="num1" value="1" class="form-control"/> 
+	</div>
+		
+	<div class="col-auto">
+		<label class="sr-only" for="operator">Operation:</label>
+		<select class="form-control" id="operator" name="operator">
+	    	<option value="+" selected>+</option>
+	    	<option value="-">-</option>
+	    	<option value="*">*</option>
+	    	<option value="/">/</option>
+	  	</select> 
+	</div>
+		
+	<div class="col-auto">
+		<label class="sr-only" for="num2">Param2:</label>
+		<input type="number" id="num2" name="num2" value="2" class="form-control"/> 
+	</div>
+	
+	<div class="col-auto">
+		<button type="submit" class="btn btn-primary" >Submit Form</button> 
+		<input type="button" class="btn btn-primary" value="Submit AJAX" onclick="submitAndProcessResult()"/>
+	</div>
+</div>		
+
+
+</form>
+	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<script type="text/javascript">
+function submitAndProcessResult() {
+	const num1 = document.getElementById("num1");
+	const num2 = document.getElementById("num2");
+	const operator = document.getElementById("operator");
+	const operatorValue = encodeURIComponent(operator.value);
+	const queryParams = `?num1=${num1.value}&num2=${num2.value}&operator=${operatorValue}&outputResultOptions=json`;
+	console.log(queryParams);
+	const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+	fetch(url, {method: 'POST'})
+		.then(response => response.json())
+		.then(result => {
+			console.log(result);
+			console.log(result.num1);
+			const messagesDiv = document.getElementById("messages");
+			while (messagesDiv.firstChild) {
+				messagesDiv.removeChild(messagesDiv.firstChild);
+			}
+			const messagesElement = document.createElement("div");
+			messagesElement.setAttribute('class', 'alert alert-primary');
+			messagesElement.setAttribute('role', 'alert');			
+			messagesElement.textContent = `${result.num1} ${result.operator} ${result.num2} = ${result.result}`;			
+			messagesDiv.appendChild(messagesElement);
+		})
+		.catch(error => console.error(error));
+}
+
+function submitHandler(event) {
+	const num1 = document.getElementById("num1");
+	const num2 = document.getElementById("num2");
+	const operator = document.getElementById("operator");
+	console.log(`${num1.value} ${operator.value} ${num2.value}`)
+	//event.preventDefault();
+	console.log("form has been submitted");	
+}
+
+document.getElementById("calculatorForm").addEventListener("submit", submitHandler);
+
+</script>
+
+</body>
+</html>
