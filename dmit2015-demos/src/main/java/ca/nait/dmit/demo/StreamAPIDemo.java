@@ -224,6 +224,17 @@ public class StreamAPIDemo {
 				.collect(Collectors.joining(","));
 		System.out.println(allWebCodeCsv);
 		
+		// Return a new List of VideoGame for every even location in the collection
+		List<VideoGame> evenGameList = IntStream.range(0, games.size())
+				.filter(index -> index % 2 == 0)
+				.mapToObj(index -> games.get(index))
+				.collect(Collectors.toList());
+		// Convert a List to an Array
+		VideoGame[] evenGameArray = evenGameList.toArray(VideoGame[]::new); 
+		System.out.println("Even index games");
+		Arrays.stream(evenGameArray)
+			.forEach(System.out::println);;
+		
 		// Summarization Collectors: 
 		//	summingInt(), summingDouble()
 		double sumPrices = games.stream()
@@ -353,3 +364,5 @@ public class StreamAPIDemo {
 		demoProcessingObjects();
 	}
 }
+
+
