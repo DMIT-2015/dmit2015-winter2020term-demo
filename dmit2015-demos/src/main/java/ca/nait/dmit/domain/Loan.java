@@ -1,5 +1,8 @@
 package ca.nait.dmit.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math3.util.Precision;
 
 import lombok.AllArgsConstructor;
@@ -33,16 +36,19 @@ public class Loan {
 	}
 	
 	public LoanSchedule[] loanScheduleTable() {
-		// Number of payments is the amortizationPeriod (in years) multipy by the number of months per year (12)
+		// Create a new List of LoanSchedule
+		List<LoanSchedule> loanScheduleList = new ArrayList<>();
+		
+		// Number of payments is the amortizationPeriod (in years) multiply by the number of months per year (12)
 		int numberOfPayments = amortizationPeriod * 12;
-		LoanSchedule[] loanSchedules = new LoanSchedule[numberOfPayments];
 		// Set the initial remaining balance to equal the mortage amount
 		double remainingBalance = mortgageAmount;
 		// Calculate the monthlyPercentageRate
 		double monthlyPercentageRate = Math.pow(1 + annualInterestRate/200, 1.0/6.0) - 1;
 		// Create a LoanSchedule for each month and add it to the loanSchedules array
 		double monthlyPaymentAmount = monthlyPayment();
-		for (int index = 0; index < numberOfPayments; index++) {
+		
+		for (int paymentNumber = 1; remainingBalance > 0; paymentNumber++) {
 			// Calculate the interestPaid and round to 2 decimal places
 			double interestPaid = monthlyPercentageRate * remainingBalance;
 			interestPaid = Precision.round(interestPaid, 2);
@@ -50,18 +56,20 @@ public class Loan {
 			double principalPaid = monthlyPaymentAmount - interestPaid;
 			principalPaid = Precision.round(principalPaid, 2);
 			
-			// Set principalPaid to remainingBalance if the it is less thean monthlyPaymentAmount
-			if (remainingBalance < monthlyPaymentAmount) {
+			// Set principalPaid to remainingBalance if the it is less than the monthlyPaymentAmount OR it is the last payment
+			if (remainingBalance < monthlyPaymentAmount || paymentNumber >= numberOfPayments) {
 				principalPaid = remainingBalance;				
 			}
 			
 			// Subtract the principalPaid from the remainingBalance
 			remainingBalance -= principalPaid;
 			remainingBalance = Precision.round(remainingBalance, 2);
-			// Create a new LoanSchedule instance and add it to the loanSchedules array
-			int paymentNumber = index + 1;
-			loanSchedules[index] = new LoanSchedule(paymentNumber, interestPaid, principalPaid, remainingBalance);			
+			// Create a new LoanSchedule instance and add it to loanScheduleList
+			LoanSchedule currentLoanSchedule = new LoanSchedule(paymentNumber, interestPaid, principalPaid, remainingBalance);	
+			loanScheduleList.add(currentLoanSchedule);
 		}
-		return loanSchedules;
+		
+		// Convert loan schedule list (List<LoanSchedule>) to an array (LoanSchedule[])
+		return loanScheduleList.toArray(LoanSchedule[]::new);
 	}
 }
