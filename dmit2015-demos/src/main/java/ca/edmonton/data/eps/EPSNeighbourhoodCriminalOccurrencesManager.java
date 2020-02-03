@@ -37,6 +37,7 @@ public class EPSNeighbourhoodCriminalOccurrencesManager {
 		return criminalOccurences.stream()
 				.map(EPSNeighbourhoodCriminalOccurrences::getNeighbourhoodDescription)
 				.distinct()
+				.sorted()
 				.collect(Collectors.toList());
 	}
 
@@ -61,13 +62,13 @@ public class EPSNeighbourhoodCriminalOccurrencesManager {
 				.collect(Collectors.toList());
 	}
 
-	public Optional<EPSNeighbourhoodCriminalOccurrences> findBy_NeighbourhoodDescription_OccurrenceViolationTypeGroup_occurrenceReportedYear_OccurrenceReportedQuarter(
+	public Optional<EPSNeighbourhoodCriminalOccurrences> findBy_NeighbourhoodDescription_OccurrenceViolationTypeGroup_OccurrenceReportedYear_OccurrenceReportedQuarter(
 			String neighbourhoodDescription, String occurrenceViolationTypeGroup, int occurrenceReportedYear, String occurrenceReportedQuarter) {
 		return criminalOccurences.stream()
 				.filter(item -> item.getNeighbourhoodDescription().equalsIgnoreCase(neighbourhoodDescription))
 				.filter(item -> item.getOccurrenceViolationTypeGroup().equalsIgnoreCase(occurrenceViolationTypeGroup))
 				.filter(item -> item.getOccurrenceReportedYear() == occurrenceReportedYear)
-				.filter(item -> item.getOccurrenceReportedQuarter() == occurrenceReportedQuarter)
+				.filter(item -> item.getOccurrenceReportedQuarter().equalsIgnoreCase(occurrenceReportedQuarter))
 				.findFirst();
 				
 	}
