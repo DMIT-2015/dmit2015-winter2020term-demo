@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,13 +46,16 @@ public class EPSNeighbourhoodCriminalOccurrencesManager {
 		return criminalOccurences.stream()
 				.map(EPSNeighbourhoodCriminalOccurrences::getOccurrenceViolationTypeGroup)
 				.distinct()
+				.sorted()
 				.collect(Collectors.toList());
 	}
 
 	public List<Integer> findDistinctOccurrenceReportedYear() {
+		Comparator<Integer> yearComparator = (lhs, rhs) -> lhs.compareTo(rhs);
 		return criminalOccurences.stream()
 				.map(EPSNeighbourhoodCriminalOccurrences::getOccurrenceReportedYear)
 				.distinct()
+				.sorted(yearComparator.reversed())
 				.collect(Collectors.toList());
 	}
 

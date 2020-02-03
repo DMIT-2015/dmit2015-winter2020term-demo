@@ -25,6 +25,20 @@ class EPSNeighbourhoodCriminalOccurrencesManagerTest {
 	}
 
 	@Test
+	void testFindDistinctOccurrenceViolationTypeGroup() {
+		List<String> occurrenceViolationTypeGroupList = manager.findDistinctOccurrenceViolationTypeGroup();
+		occurrenceViolationTypeGroupList.stream().forEach(System.out::println);
+		assertEquals(6, occurrenceViolationTypeGroupList.size());
+	}
+
+	@Test
+	void testFindDistinctOccurrenceReportedYear() {
+		List<Integer> occurrenceReportedYearGroupList = manager.findDistinctOccurrenceReportedYear();
+		occurrenceReportedYearGroupList.stream().forEach(System.out::println);
+		assertEquals(11, occurrenceReportedYearGroupList.size());
+	}
+
+	@Test
 	void testFindBySuccess() {
 		String neighbourhoodDescription = "ABBOTTSFIELD";
 		String occurrenceViolationTypeGroup = "Assault";
