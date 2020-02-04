@@ -7,101 +7,132 @@
 </head>
 <body>
 
-<h1>Simple Calculator</h1>
-<form id="calculatorForm" method="post" action="../../SimpleCalculatorServlet" >
+	<h1>Simple Calculator</h1>
 
-<div id="messages">
+	<div id="messages">
+	</div>	
 
-</div>
+	<form id="calculatorForm" method="post" action="../../SimpleCalculatorServlet" >
 
-<div class="col-auto">
-	Output result in: 
-	<div class="form-check form-check-inline">
-	  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputHtml" value="html" >
-	  <label class="form-check-label" for="outputHtml">HTML</label>
-	</div>
-	<div class="form-check form-check-inline">
-	  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputText" value="text">
-	  <label class="form-check-label" for="outputText">Text</label>
-	</div>
-	<div class="form-check form-check-inline">
-	  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputJson" value="json">
-	  <label class="form-check-label" for="outputJson">JSON</label>
-	</div>
-</div>
-
-
-<div class="form-row align-items-center">
-	<div class="col-auto">
-		<label class="sr-only" for="num1">First number:</label>
-		<input type="number" id="num1" name="num1" value="1" class="form-control"/> 
-	</div>
-		
-	<div class="col-auto">
-		<label class="sr-only" for="operator">Operation:</label>
-		<select class="form-control" id="operator" name="operator">
-	    	<option value="+" selected>+</option>
-	    	<option value="-">-</option>
-	    	<option value="*">*</option>
-	    	<option value="/">/</option>
-	  	</select> 
-	</div>
-		
-	<div class="col-auto">
-		<label class="sr-only" for="num2">Param2:</label>
-		<input type="number" id="num2" name="num2" value="2" class="form-control"/> 
-	</div>
+		<div class="col-auto">
+			Output result in: 
+			<div class="form-check form-check-inline">
+			  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputNewHtml" value="html" >
+			  <label class="form-check-label" for="outputHtml">HTML</label>
+			</div>
+			<div class="form-check form-check-inline">
+			  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputText" value="text">
+			  <label class="form-check-label" for="outputText">Text</label>
+			</div>
+			<div class="form-check form-check-inline">
+			  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputJson" value="json" selected="selected">
+			  <label class="form-check-label" for="outputJson">JSON</label>
+			</div>
+		</div>
 	
-	<div class="col-auto">
-		<button type="submit" class="btn btn-primary" >Submit Form</button> 
-		<input type="button" class="btn btn-primary" value="Submit AJAX" onclick="submitAndProcessResult()"/>
-	</div>
-</div>		
-
-
-</form>
+		 <div class="form-row align-items-center">
+		 	<div class="col-auto">
+			<label class="sr-only" for="operand1">Param1:</label>
+			<input type="number" id="operand1" name="operand1" value="1" class="form-control" /> <br />
+			</div>
+			
+			<div class="col-auto">
+			<label class="sr-only" for="operand2">Param2:</label>
+			<input type="number" id="operand2" name="operand2" value="2" class="form-control" /> <br />
+			</div>
+		</div>		
+		
+		<input type="hidden" id="operation" name="operation" value="+"/>
+		
+		<button type="submit" class="btn btn-primary" onclick="submitForm('+')">Add</button>
+		<button type="submit" class="btn btn-primary" onclick="submitForm('-')">Subtract</button>
+		<button type="submit" class="btn btn-primary" onclick="submitForm('*')">Multiply</button>
+		<button type="submit" class="btn btn-primary" onclick="submitForm('/')">Divide</button>
+		<button type="submit" class="btn btn-light" onclick="removeAllMessages()">Clear</button>
+<!-- 
+		<button type="submit" class="btn btn-primary" onclick="changeOperator('+')">Add</button>
+		<button type="submit" class="btn btn-primary" onclick="changeOperator('-')">Subtract</button>
+		<button type="submit" class="btn btn-primary" onclick="changeOperator('*')">Multiply</button>
+		<button type="submit" class="btn btn-primary" onclick="changeOperator('/')">Divide</button>
+ -->				
+	</form>
 	
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
 
 <script type="text/javascript">
-function submitAndProcessResult() {
-	const num1 = document.getElementById("num1");
-	const num2 = document.getElementById("num2");
-	const operator = document.getElementById("operator");
-	const operatorValue = encodeURIComponent(operator.value);
-	const queryParams = `?num1=${num1.value}&num2=${num2.value}&operator=${operatorValue}&outputResultOptions=json`;
-	console.log(queryParams);
-	const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
-	fetch(url, {method: 'POST'})
-		.then(response => response.json())
-		.then(result => {
-			console.log(result);
-			console.log(result.num1);
-			const messagesDiv = document.getElementById("messages");
-			while (messagesDiv.firstChild) {
-				messagesDiv.removeChild(messagesDiv.firstChild);
-			}
-			const messagesElement = document.createElement("div");
-			messagesElement.setAttribute('class', 'alert alert-primary');
-			messagesElement.setAttribute('role', 'alert');			
-			messagesElement.textContent = `${result.num1} ${result.operator} ${result.num2} = ${result.result}`;			
-			messagesDiv.appendChild(messagesElement);
-		})
-		.catch(error => console.error(error));
+function removeAllMessages() {
+	console.log('removing all messages');
+	const messagesDiv = document.getElementById("messages");
+	while (messagesDiv.firstChild) {
+		messagesDiv.removeChild(messagesDiv.firstChild);
+	}
 }
 
-function submitHandler(event) {
-	const num1 = document.getElementById("num1");
-	const num2 = document.getElementById("num2");
-	const operator = document.getElementById("operator");
-	console.log(`${num1.value} ${operator.value} ${num2.value}`)
-	//event.preventDefault();
-	console.log("form has been submitted");	
+function addMessage(newMessage) {
+	removeAllMessages();
+	const messagesDiv = document.getElementById("messages");
+	const messagesElement = document.createElement("div");
+	messagesElement.setAttribute('class', 'alert alert-primary');
+	messagesElement.setAttribute('role', 'alert');			
+	messagesElement.textContent = newMessage;			
+	messagesDiv.appendChild(messagesElement);
 }
 
-document.getElementById("calculatorForm").addEventListener("submit", submitHandler);
+function submitForm(operationValue) {
+	const operand1 = document.getElementById("operand1");
+	const operand2 = document.getElementById("operand2");
+	const operation = document.getElementById("operation");
+	
+	console.log(`${operand1.value} ${operationValue} ${operand2.value}`)
+	const outputResultOptions = document.getElementsByName("outputResultOptions");
+
+	if (outputResultOptions[0].checked) {
+		operation.value = operationValue;
+		//const form = document.getElementById("calculatorForm");
+		form.submit();
+	} else if (outputResultOptions[1].checked) {
+		const encodedOperationValue = encodeURIComponent(operationValue);
+		const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=text`;
+		console.log(queryParams);
+		const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+		
+		fetch(url, {method: 'POST'})
+			.then(response => response.text())
+			.then(responseText => {
+				console.log(responseText);
+				const responseArray = responseText.split(',');		
+				// result format: operand1,operation,operand2,result
+				addMessage(`${responseArray[0]} ${responseArray[1]} ${responseArray[2]} = ${responseArray[3]}`);
+			})
+			.catch(error => console.error(error));		
+	} else if (outputResultOptions[2].checked) {
+		const encodedOperationValue = encodeURIComponent(operationValue);
+		const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=json`;
+		console.log(queryParams);
+		const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+		
+		fetch(url, {method: 'POST'})
+			.then(response => response.json())
+			.then(responseJson => {
+				console.log(responseJson);
+				addMessage(`${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`);
+			})
+			.catch(error => console.error(error));
+	}
+
+}
+
+function changeOperator(selectedOperation) {
+	submitForm(selectedOperation);
+}
+
+const form = document.getElementById("calculatorForm");
+form.addEventListener("submit", function(event) {
+	event.preventDefault();
+});
+
 
 </script>
 

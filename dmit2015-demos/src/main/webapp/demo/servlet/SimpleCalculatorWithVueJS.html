@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Simple Calculator Vue.js</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+<div id="app">
+
+	<h1>Simple Calculator Vue.js</h1>
+
+	<div v-if="message" id="messages" class="alert alert-info" role="alert" >
+		{{ message }}
+	</div>	
+
+	<form @submit.prevent="onSubmit" ref="form" id="calculatorForm" method="post" action="../../SimpleCalculatorServlet">
+	
+		<div class="col-auto">
+			Output result in: 
+			<div class="form-check form-check-inline">
+			  <input v-model="selectedOutputFormat"
+			  	class="form-check-input" 
+			  	type="radio"
+			  	name="outputResultOptions" 
+			  	id="outputNewHtml" 
+			  	value="html" 
+			  >
+			  <label class="form-check-label" for="outputHtml">HTML</label>
+			</div>
+			<div class="form-check form-check-inline">
+			  <input v-model="selectedOutputFormat"
+			  	class="form-check-input" 
+			  	type="radio" 
+			  	name="outputResultOptions" 
+			  	id="outputText" 
+			  	value="text"
+			  >
+			  <label class="form-check-label" for="outputText">Text</label>
+			</div>
+			<div class="form-check form-check-inline">
+			  <input v-model="selectedOutputFormat"
+			  	class="form-check-input" 
+			  	type="radio" 
+			  	name="outputResultOptions" 
+			  	id="outputJson" 
+			  	value="json" 
+			  >
+			  <label class="form-check-label" for="outputJson">JSON</label>
+			</div>
+		</div>
+	
+		 <div class="form-row align-items-center">
+		 	<div class="col-auto">
+				<label class="sr-only" for="operand1">Param1:</label>
+				<input v-model="form.operand1"				
+					type="number" 
+					id="operand1" 
+					name="operand1" 
+					value="1" 
+					class="form-control" 
+				/> <br />
+			</div>
+			
+			<div class="col-auto">
+				<label class="sr-only" for="operand2">Param2:</label>
+				<input v-model="form.operand2" 
+					type="number" 
+					id="operand2" 
+					name="operand2" 
+					value="2" 
+					class="form-control" 
+				/> <br />	
+			</div>
+		</div>		
+		
+		<input v-model="form.operation"
+			type="hidden" 
+			id="operation" 
+			name="operation" 
+			value="+"
+		/>
+		
+		<button type="button" class="btn btn-primary" v-on:click="submitForm('+')">Add</button>
+		<button type="button" class="btn btn-primary" v-on:click="submitForm('-')">Subtract</button>
+		<button type="button" class="btn btn-primary" v-on:click="submitForm('*')">Multiply</button>
+		<button type="button" class="btn btn-primary" v-on:click="submitForm('/')">Divide</button>
+		<button type="button" class="btn btn-light" v-on:click="clearMessage()">Clear</button>
+
+	</form>
+	
+</div>
+	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+
+var app = new Vue({
+	el: '#app',
+	
+    data: {
+        message: '',
+        form: {
+			operand1: 1,
+			operand2: 2,
+			operation: '+',
+			result: 3
+        },
+       	selectedOutputFormat: 'json',
+       	messages: [],
+       	outputOptions: [
+           { text:'HTML', value:'html' },
+           { text:'Text', value:'text' },
+           { text:'JSON', value:'json' },
+       	]
+     },
+     
+     // define methods
+     methods: {
+		clearMessage: function() {
+			this.message = '';
+		},
+		      
+		submitForm: function(operationValue) {
+			if (this.selectedOutputFormat == 'html') {
+				operation.value = operationValue;
+				this.$refs.form.submit();
+			} else if (this.selectedOutputFormat == "text") {
+				const encodedOperationValue = encodeURIComponent(operationValue);
+				const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=text`;
+				console.log(queryParams);
+				const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+				
+				fetch(url, {method: 'POST'})
+					.then(response => response.text())
+					.then(responseText => {
+						console.log(responseText);
+						const responseArray = responseText.split(',');		
+						// result format: operand1,operation,operand2,result
+						this.form.operand1 = responseArray[0];
+						this.form.operation = responseArray[1];
+						this.form.operand2 = responseArray[2];
+						this.form.result = responseArray[3];
+
+						this.message = `${responseArray[0]} ${responseArray[1]} ${responseArray[2]} = ${responseArray[3]}`;
+					})
+					.catch(error => console.error(error));		
+			} else if (this.selectedOutputFormat == "json") {
+				const encodedOperationValue = encodeURIComponent(operationValue);
+				const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=json`;
+				console.log(queryParams);
+				const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+				
+				fetch(url, {method: 'POST'})
+					.then(response => response.json())
+					.then(responseJson => {
+						console.log(responseJson);
+						//addMessage(`${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`);
+						this.form.operand1 = responseJson.operand1;
+						this.form.operation = responseJson.operation;
+						this.form.operand2 = responseJson.operand2;
+						this.form.result = responseJson.result;
+
+						this.message = `${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`;
+					})
+					.catch(error => console.error(error));
+			}
+			
+     	}
+     },
+})
+
+
+</script>
+
+</body>
+</html>
