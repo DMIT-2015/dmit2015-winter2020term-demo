@@ -100,6 +100,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 <script type="text/javascript">
+const apiURL = "http://localhost:8080/dmit2015-demos/SimpleCalculatorServlet";
 
 var app = new Vue({
 	el: '#app',
@@ -135,7 +136,7 @@ var app = new Vue({
 				const encodedOperationValue = encodeURIComponent(operationValue);
 				const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=text`;
 				console.log(queryParams);
-				const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+				const url = apiURL + queryParams;
 				
 				fetch(url, {method: 'POST'})
 					.then(response => response.text())
@@ -155,7 +156,7 @@ var app = new Vue({
 				const encodedOperationValue = encodeURIComponent(operationValue);
 				const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=json`;
 				console.log(queryParams);
-				const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+				const url = apiURL + queryParams;
 				
 				fetch(url, {method: 'POST'})
 					.then(response => response.json())

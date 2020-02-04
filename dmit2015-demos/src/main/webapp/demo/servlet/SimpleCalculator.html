@@ -17,7 +17,7 @@
 		<div class="col-auto">
 			Output result in: 
 			<div class="form-check form-check-inline">
-			  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputNewHtml" value="html" >
+			  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputNewHtml" value="html" checked="checked" >
 			  <label class="form-check-label" for="outputHtml">HTML</label>
 			</div>
 			<div class="form-check form-check-inline">
@@ -25,7 +25,7 @@
 			  <label class="form-check-label" for="outputText">Text</label>
 			</div>
 			<div class="form-check form-check-inline">
-			  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputJson" value="json" selected="selected">
+			  <input class="form-check-input" type="radio" name="outputResultOptions" id="outputJson" value="json" >
 			  <label class="form-check-label" for="outputJson">JSON</label>
 			</div>
 		</div>
@@ -49,12 +49,7 @@
 		<button type="submit" class="btn btn-primary" onclick="submitForm('*')">Multiply</button>
 		<button type="submit" class="btn btn-primary" onclick="submitForm('/')">Divide</button>
 		<button type="submit" class="btn btn-light" onclick="removeAllMessages()">Clear</button>
-<!-- 
-		<button type="submit" class="btn btn-primary" onclick="changeOperator('+')">Add</button>
-		<button type="submit" class="btn btn-primary" onclick="changeOperator('-')">Subtract</button>
-		<button type="submit" class="btn btn-primary" onclick="changeOperator('*')">Multiply</button>
-		<button type="submit" class="btn btn-primary" onclick="changeOperator('/')">Divide</button>
- -->				
+
 	</form>
 	
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -62,6 +57,8 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
 
 <script type="text/javascript">
+const apiURL = "http://localhost:8080/dmit2015-demos/SimpleCalculatorServlet";
+
 function removeAllMessages() {
 	console.log('removing all messages');
 	const messagesDiv = document.getElementById("messages");
@@ -96,7 +93,7 @@ function submitForm(operationValue) {
 		const encodedOperationValue = encodeURIComponent(operationValue);
 		const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=text`;
 		console.log(queryParams);
-		const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+		const url = apiURL + queryParams;
 		
 		fetch(url, {method: 'POST'})
 			.then(response => response.text())
@@ -111,7 +108,7 @@ function submitForm(operationValue) {
 		const encodedOperationValue = encodeURIComponent(operationValue);
 		const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=json`;
 		console.log(queryParams);
-		const url = 'http://localhost:8080/javawockee-web/SimpleCalculatorServlet' + queryParams;
+		const url = apiURL + queryParams;
 		
 		fetch(url, {method: 'POST'})
 			.then(response => response.json())

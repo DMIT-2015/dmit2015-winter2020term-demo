@@ -30,32 +30,53 @@ public class SimpleCalculatorServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String num1 = request.getParameter("num1");
-		String num2 = request.getParameter("num2");
-		String operator = request.getParameter("operator");
+		String operand1 = request.getParameter("operand1");
+		String operand2 = request.getParameter("operand2");
+		String operation = request.getParameter("operation");
 		String outputOptions = request.getParameter("outputResultOptions");
 
-		double result = 0;
+		PrintWriter out = response.getWriter();
+		
+		SimpleCalculator calculator = new SimpleCalculator();
 		try {
-			switch(operator) {
+			calculator.setOperand1(Double.parseDouble(operand1));
+			calculator.setOperand2(Double.parseDouble(operand2));
+
+			switch(operation) {
 			case "+": 
-				result = Double.parseDouble(num1) + Double.parseDouble(num2);
+				calculator.add();
 				break;
 			case "-": 
-				result = Double.parseDouble(num1) - Double.parseDouble(num2);
+				calculator.subtract();
 				break;
 			case "*": 
-				result = Double.parseDouble(num1) * Double.parseDouble(num2);
+				calculator.multiply();
 				break;
 			case "/": 
-				result = Double.parseDouble(num1) / Double.parseDouble(num2);
+				calculator.divide();
 				break;
 			}
 		} catch(NumberFormatException ex) {
-//			out.println("Both parameters must be numbers");
+			if (outputOptions.toLowerCase().equals("samehtml")) {
+				String message = String.format("Error processing request with exception: %s", ex.getMessage());
+				request.setAttribute("errorMessage", message);
+				getServletContext()
+					.getRequestDispatcher("/demo/servlet/SimpleCalculator.html")
+					.forward(request, response);
+			} else {
+				response.setContentType("text/html");
+				out.println("<html>");
+			    out.println("<head>");
+			    out.println("<title>SimpleCalculator Results</title>");            
+			    out.println("</head>");
+			    out.println("<body>");
+			    out.println("<h1>Error processing request: " + ex.getMessage() + "</h1>");
+			    out.println("<br/>");
+			    out.println("</body>");
+			    out.println("</html>");				
+			}
 		}
 
-		PrintWriter out = response.getWriter();
 		switch(outputOptions.toLowerCase()) {
 		case "html":
 			response.setContentType("text/html");
@@ -64,22 +85,22 @@ public class SimpleCalculatorServlet extends HttpServlet {
 	        out.println("<title>SimpleCalculator Results</title>");            
 	        out.println("</head>");
 	        out.println("<body>");
-	        out.println("<h1>" + num1 + " " + operator + " " + num2 + " = " + result + "</h1>");
+	        out.println("<h1>" + operand1 + " " + operation + " " + operand2 + " = " + calculator.getResult() + "</h1>");
 	        out.println("<br/>");
 	        out.println("</body>");
 	        out.println("</html>");
 			break;
 		case "text":
 			response.setContentType("text/plain");
-			out.println(num1 + "," + operator + "," + num2 + "," + result);
+			out.println(operand1 + "," + operation + "," + operand2 + "," + calculator.getResult());
 			break;
 		case "json":
 			response.setContentType("application/json");
 			JsonObject jsonResult = Json.createObjectBuilder()
-					.add("num1", num1)
-					.add("operator", operator)
-					.add("num2", num2)
-					.add("result", result)
+					.add("operand1", operand1)
+					.add("operation", operation)
+					.add("operand2", operand2)
+					.add("result", calculator.getResult())
 					.build();
 			out.print(jsonResult);
 			break;
@@ -97,7 +118,6 @@ public class SimpleCalculatorServlet extends HttpServlet {
 		    break;				
 		}
 		
-			
 	}
 
 }

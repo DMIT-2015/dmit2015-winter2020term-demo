@@ -1,5 +1,7 @@
 package ca.nait.dmit.domain;
 
+import javax.validation.constraints.Min;
+
 /**
  * The Circle class models a circle shape.
  * 
@@ -9,6 +11,7 @@ package ca.nait.dmit.domain;
 public class Circle {
 	
 	/** The radius of the circle */
+	@Min(value = 1, message="Radius of circle must be at least one")
 	private double radius;	
 	
 	/** Return the radius of the circle 
