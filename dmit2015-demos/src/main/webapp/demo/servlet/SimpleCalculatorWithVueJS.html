@@ -129,50 +129,59 @@ var app = new Vue({
 		},
 		      
 		submitForm: function(operationValue) {
+			this.$refs.form.operation.value = operationValue;
+			//console.log(this.$refs.form.operation.value);
+			
 			if (this.selectedOutputFormat == 'html') {
 				operation.value = operationValue;
 				this.$refs.form.submit();
 			} else if (this.selectedOutputFormat == "text") {
-				const encodedOperationValue = encodeURIComponent(operationValue);
-				const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=text`;
-				console.log(queryParams);
-				const url = apiURL + queryParams;
-				
-				fetch(url, {method: 'POST'})
-					.then(response => response.text())
-					.then(responseText => {
-						console.log(responseText);
-						const responseArray = responseText.split(',');		
-						// result format: operand1,operation,operand2,result
-						this.form.operand1 = responseArray[0];
-						this.form.operation = responseArray[1];
-						this.form.operand2 = responseArray[2];
-						this.form.result = responseArray[3];
+				const data = new URLSearchParams();
+				for (const pair of new FormData(this.$refs.form)) {
+					console.log(pair[0] + ':' + pair[1]);
+					data.append(pair[0], pair[1]);
+				}
 
-						this.message = `${responseArray[0]} ${responseArray[1]} ${responseArray[2]} = ${responseArray[3]}`;
-					})
-					.catch(error => console.error(error));		
+				fetch(apiURL, { 
+					method: 'POST',
+					body: data
+				})
+				.then(response => response.text())
+				.then(responseText => {
+					console.log(responseText);
+					const responseArray = responseText.split(',');		
+					// result format: operand1,operation,operand2,result
+					this.form.operand1 = responseArray[0];
+					this.form.operation = responseArray[1];
+					this.form.operand2 = responseArray[2];
+					this.form.result = responseArray[3];
+
+					this.message = `${responseArray[0]} ${responseArray[1]} ${responseArray[2]} = ${responseArray[3]}`;
+				})
+				.catch(error => console.error(error));		
 			} else if (this.selectedOutputFormat == "json") {
-				const encodedOperationValue = encodeURIComponent(operationValue);
-				const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=json`;
-				console.log(queryParams);
-				const url = apiURL + queryParams;
-				
-				fetch(url, {method: 'POST'})
-					.then(response => response.json())
-					.then(responseJson => {
-						console.log(responseJson);
-						//addMessage(`${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`);
-						this.form.operand1 = responseJson.operand1;
-						this.form.operation = responseJson.operation;
-						this.form.operand2 = responseJson.operand2;
-						this.form.result = responseJson.result;
+				const data = new URLSearchParams();
+				for (const pair of new FormData(this.$refs.form)) {
+					data.append(pair[0], pair[1]);
+				}
 
-						this.message = `${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`;
-					})
-					.catch(error => console.error(error));
-			}
-			
+				fetch(apiURL, { 
+					method: 'POST',
+					body: data
+				})
+				.then(response => response.json())
+				.then(responseJson => {
+					console.log(responseJson);
+					//addMessage(`${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`);
+					this.form.operand1 = responseJson.operand1;
+					this.form.operation = responseJson.operation;
+					this.form.operand2 = responseJson.operand2;
+					this.form.result = responseJson.result;
+
+					this.message = `${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`;
+				})
+				.catch(error => console.error(error));
+			}			
      	}
      },
 })

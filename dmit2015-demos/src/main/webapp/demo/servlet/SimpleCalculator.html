@@ -78,11 +78,12 @@ function addMessage(newMessage) {
 }
 
 function submitForm(operationValue) {
-	const operand1 = document.getElementById("operand1");
-	const operand2 = document.getElementById("operand2");
+	//const operand1 = document.getElementById("operand1");
+	//const operand2 = document.getElementById("operand2");
 	const operation = document.getElementById("operation");
+	operation.value = operationValue;
 	
-	console.log(`${operand1.value} ${operationValue} ${operand2.value}`)
+	//console.log(`${operand1.value} ${operationValue} ${operand2.value}`)
 	const outputResultOptions = document.getElementsByName("outputResultOptions");
 
 	if (outputResultOptions[0].checked) {
@@ -90,33 +91,41 @@ function submitForm(operationValue) {
 		//const form = document.getElementById("calculatorForm");
 		form.submit();
 	} else if (outputResultOptions[1].checked) {
-		const encodedOperationValue = encodeURIComponent(operationValue);
-		const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=text`;
-		console.log(queryParams);
-		const url = apiURL + queryParams;
+				
+		const data = new URLSearchParams();
+		for (const pair of new FormData(form)) {
+			data.append(pair[0], pair[1]);
+		}
 		
-		fetch(url, {method: 'POST'})
-			.then(response => response.text())
-			.then(responseText => {
-				console.log(responseText);
-				const responseArray = responseText.split(',');		
-				// result format: operand1,operation,operand2,result
-				addMessage(`${responseArray[0]} ${responseArray[1]} ${responseArray[2]} = ${responseArray[3]}`);
-			})
-			.catch(error => console.error(error));		
+		fetch(apiURL, { 
+			method: 'POST',
+			body: data
+		})
+		.then(response => response.text())
+		.then(responseText => {
+			//console.log(responseText);
+			const responseArray = responseText.split(',');		
+			// result format: operand1,operation,operand2,result
+			addMessage(`${responseArray[0]} ${responseArray[1]} ${responseArray[2]} = ${responseArray[3]}`);
+		})
+		.catch(error => console.error(error));		
 	} else if (outputResultOptions[2].checked) {
-		const encodedOperationValue = encodeURIComponent(operationValue);
-		const queryParams = `?operand1=${operand1.value}&operand2=${operand2.value}&operation=${encodedOperationValue}&outputResultOptions=json`;
-		console.log(queryParams);
-		const url = apiURL + queryParams;
+
+		const data = new URLSearchParams();
+		for (const pair of new FormData(form)) {
+			data.append(pair[0], pair[1]);
+		}
 		
-		fetch(url, {method: 'POST'})
-			.then(response => response.json())
-			.then(responseJson => {
-				console.log(responseJson);
-				addMessage(`${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`);
-			})
-			.catch(error => console.error(error));
+		fetch(apiURL, { 
+			method: 'POST',
+			body: data 
+		})
+		.then(response => response.json())
+		.then(responseJson => {
+			console.log(responseJson);
+			addMessage(`${responseJson.operand1} ${responseJson.operation} ${responseJson.operand2} = ${responseJson.result}`);
+		})
+		.catch(error => console.error(error));
 	}
 
 }

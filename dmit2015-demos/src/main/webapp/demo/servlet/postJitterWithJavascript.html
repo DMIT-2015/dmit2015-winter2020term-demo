@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Jitter Post</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+	<h1>New Jitter Message</h1>
+
+	<div id="messages">
+	</div>	
+
+	<form id="jitterForm" method="post" action="../../JitterPostServlet">
+
+		<div class="form-group">
+   			<label for="loginName">Login Name</label>
+	    	<input type="text" 
+	    		class="form-control" 
+	    		id="loginName" 
+	    		name="loginName" 
+	    		placeholder="enter your login name"
+	    	>
+   		</div>
+
+		<div class="form-group">
+   			<label for="message">Message</label>
+	    	<textarea 
+	    		class="form-control" 
+	    		id="message" 
+	    		name="message" 
+	    		placeholder="enter your message"
+	    	>
+	    	</textarea>
+   		</div>
+    						
+		<button type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
+	</form>
+	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<script type="text/javascript">
+const apiURL = 'http://localhost:8080/dmit2015-demos/JitterPostServlet';
+
+function removeAllMessages() {
+	console.log('removing all messages');
+	const messagesDiv = document.getElementById("messages");
+	while (messagesDiv.firstChild) {
+		messagesDiv.removeChild(messagesDiv.firstChild);
+	}
+}
+
+function addInfoMessage(newMessage) {
+	removeAllMessages();
+	const messagesDiv = document.getElementById("messages");
+	const messagesElement = document.createElement("div");
+	messagesElement.setAttribute('class', 'alert alert-primary');
+	messagesElement.setAttribute('role', 'alert');			
+	messagesElement.innerHTML = newMessage;			
+	messagesDiv.appendChild(messagesElement);
+}
+
+function addErrorMessage(newMessage) {
+	removeAllMessages();
+	const messagesDiv = document.getElementById("messages");
+	const messagesElement = document.createElement("div");
+	messagesElement.setAttribute('class', 'alert alert-danger');
+	messagesElement.setAttribute('role', 'danger');			
+	messagesElement.innerHTML = newMessage;			
+	messagesDiv.appendChild(messagesElement);
+}
+
+
+function onSubmit() {
+	const loginNameElement = document.getElementById("loginName");
+	const messageElement = document.getElementById("message");
+
+	const data = new URLSearchParams();
+	for (const pair of new FormData(form)) {
+		data.append(pair[0], pair[1]);
+	}
+	
+	fetch(apiURL, { 
+		method: 'POST',
+		body: data
+	})
+	.then(response => response.text())
+	.then(responseText => {
+		//console.log(responseText);
+		addInfoMessage(responseText);
+		loginNameElement.value = '';
+		messageElement.value = '';
+	})
+	.catch(error => {
+		//console.error(error)
+		addErrorMessage(error)
+	});		
+	
+}
+
+const form = document.getElementById("jitterForm");
+form.addEventListener("submit", function(event) {
+	event.preventDefault();
+});
+
+</script>
+
+</body>
+</html>
