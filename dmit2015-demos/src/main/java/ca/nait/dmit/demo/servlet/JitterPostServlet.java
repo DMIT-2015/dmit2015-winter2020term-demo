@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Set;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,12 +47,20 @@ public class JitterPostServlet extends HttpServlet {
 		newChatter.setMessage(message);
 		
 		Set<ConstraintViolation<Jitter>> constraintViolations = validate(newChatter);
+				
+		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+		constraintViolations.stream()
+			.forEach(item -> {
+				jsonArrayBuilder.add(item.getMessage());
+			}
+		);
 		
 		PrintWriter out = response.getWriter();
-		response.setContentType("text/plain");
-		constraintViolations.stream().forEach(item -> {
-			out.println(item.getMessage());
-		});
+		response.setContentType("application/json;charset=UTF-8");
+//		out.print(jsonArrayBuilder.build().toString());
+		
+		Json.createWriter(out).writeArray(jsonArrayBuilder.build());
+		
 		out.close();
 	}
 	
@@ -104,3 +114,4 @@ public class JitterPostServlet extends HttpServlet {
 	}
 
 }
+

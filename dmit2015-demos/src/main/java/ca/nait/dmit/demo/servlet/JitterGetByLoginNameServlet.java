@@ -5,6 +5,9 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.stream.JsonCollectors;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -38,21 +41,36 @@ public class JitterGetByLoginNameServlet extends HttpServlet {
 		ServletContext applicationContext = getServletContext();
 		@SuppressWarnings("unchecked")
 		List<Jitter> chatterList = (List<Jitter>) applicationContext.getAttribute(Constants.JITTERS_APPLICATION_SCOPE);
-		List<Jitter> loginNameChatterList = chatterList.stream()
+		List<Jitter> loginNameJitterList = chatterList.stream()
 				.filter(currentChatter -> currentChatter.getLoginName().equalsIgnoreCase(loginName))
 				.collect(Collectors.toList());
 		
 		// Iterate through each item in Map and print on a separate line the loginName, message, and postDate.
 		PrintWriter out = response.getWriter();
-		response.setContentType("text/plain");
-		loginNameChatterList.stream()
-			.forEach(currentChatter -> {
-			out.println(currentChatter.getLoginName());
-			out.println(currentChatter.getMessage());
-			out.println(currentChatter.getPostedDate());
-		});
+		
+		response.setContentType("application/json;charset=UTF-8");
+		JsonArray jittersJsonArray = loginNameJitterList.stream()
+			.map(currentJitter -> {
+				return Json.createObjectBuilder()
+						.add("loginName", currentJitter.getLoginName())
+						.add("message", currentJitter.getMessage())
+						.add("postedDate", currentJitter.getPostedDate().toString())
+						.build();	
+			})
+			.collect(JsonCollectors.toJsonArray());
+					
+		out.print(jittersJsonArray);
+		
+//		response.setContentType("text/plain");
+//		loginNameChatterList.stream()
+//			.forEach(currentChatter -> {
+//			out.println(currentChatter.getLoginName());
+//			out.println(currentChatter.getMessage());
+//			out.println(currentChatter.getPostedDate());
+//		});
 		out.close();
 		
 	}
 
 }
+

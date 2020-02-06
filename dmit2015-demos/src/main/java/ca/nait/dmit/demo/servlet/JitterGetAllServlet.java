@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.stream.JsonCollectors;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -37,13 +40,20 @@ public class JitterGetAllServlet extends HttpServlet {
 
 		// Iterate through each item in Map and print on a separate line the loginName, message, and postDate.
 		PrintWriter out = response.getWriter();
-		response.setContentType("text/plain");
-		chatterList.stream()
-			.forEach(currentChatter -> {
-				out.println(currentChatter.getLoginName());
-				out.println(currentChatter.getMessage());
-				out.println(currentChatter.getPostedDate());
-			});
+		response.setContentType("application/json;charset=UTF-8");
+		JsonArray jittersJsonArray = chatterList.stream()
+			.map(currentJitter -> {
+				return Json.createObjectBuilder()
+						.add("loginName", currentJitter.getLoginName())
+						.add("message", currentJitter.getMessage())
+						.add("postedDate", currentJitter.getPostedDate().toString())
+						.build();	
+			})
+			.collect(JsonCollectors.toJsonArray());
+					
+//		out.print(jittersJsonArray);
+		Json.createWriter(out).writeArray(jittersJsonArray);
+		
 		out.close();
 				
 	}

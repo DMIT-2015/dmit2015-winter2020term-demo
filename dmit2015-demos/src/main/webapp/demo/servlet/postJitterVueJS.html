@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Chatter Post</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+	<h1>New Chatter Message</h1>
+<div id="app">
+	<div id="messages">
+	</div>	
+
+	<form @submit.prevent="onSubmit" method="post" action="../../PostChatterServlet" >
+
+		<div class="form-group">
+   			<label for="loginName">Login Name</label>
+	    	<input
+	    		v-model="form.loginName" 
+	    		type="text" 
+	    		class="form-control" 
+	    		id="loginName" 
+	    		name="loginName" 
+	    		placeholder="enter your login name"
+	    	>
+   		</div>
+
+		<div class="form-group">
+   			<label for="message">Message</label>
+	    	<textarea 
+	    		v-model="form.message"
+	    		class="form-control" 
+	    		id="message" 
+	    		name="message" 
+	    		placeholder="enter your login name"
+	    	>
+	    	</textarea>
+   		</div>
+    						
+		<button
+			:disabled="!formIsValid"
+			@click.prevent="onSubmit"
+			type="submit" 
+			class="btn btn-primary">
+			Submit
+		</button>
+	</form>
+</div>
+	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+const apiURL = "http://localhost:8080/javawockee-web/PostChatterServlet";
+
+var app = new Vue({
+	el: '#app',
+	
+    data: {
+        message: '',
+       	messages: [],
+        form: {
+			loginName: '',
+			message: '',
+        },
+     },
+     
+     // define methods
+     methods: {
+		clearMessage: function() {
+			this.message = '';
+			this.messages = [];
+		},
+		      
+		onSubmit() { 
+			if (!this.formIsValid) {
+				console.log('invalid form entries');
+			} else {
+				console.log('valid form submit click');
+				const queryParams = `?loginName=${this.form.loginName}&message=this.form.message`;
+				console.log(queryParams);
+				const url = apiURL + queryParams;
+				
+				fetch(url, {method: 'POST'})
+					.then(response => response.text())
+					.then(responseText => {
+						console.log(responseText);
+						const responseArray = responseText.split('\');		
+						// result format: operand1,operation,operand2,result
+						this.message = `${responseArray[0]}, ${responseArray[1]}, ${responseArray[2]}`;
+					})
+					.catch(error => console.error(error));		
+			}
+     	}
+     },
+
+     computed: {
+		formIsValid() {
+			return (this.form.loginName.length > 0 && this.form.message.length > 0);
+		}
+     }
+})
+
+
+</script>
+
+</body>
+</html>

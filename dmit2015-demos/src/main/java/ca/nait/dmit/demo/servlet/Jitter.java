@@ -3,6 +3,8 @@ package ca.nait.dmit.demo.servlet;
 import java.time.LocalDate;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
@@ -17,6 +19,7 @@ public class Jitter {
 	@NotBlank(message = "Message value is required")
 	private String message;
 	
+//	@Past
 	private LocalDate postedDate = LocalDate.now();
 	
 }
