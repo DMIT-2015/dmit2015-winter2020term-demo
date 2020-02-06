@@ -46,120 +46,106 @@
 const apiURL = 'http://localhost:8080/dmit2015-demos/JitterPostServlet';
 
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Set;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-/**
- * Servlet implementation class ChatterServlet
- */
-@WebServlet("/JitterPostServlet")
-public class JitterPostServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public JitterPostServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// Retrieve parameter values passed into this request
-		String loginName = request.getParameter("loginName");
-		String message = request.getParameter("message");
-		
-		// Construct a new Chatter object and set the loginName and message
-		Jitter newChatter = new Jitter();
-		newChatter.setLoginName(loginName);
-		newChatter.setMessage(message);
-		
-		Set<ConstraintViolation<Jitter>> constraintViolations = validate(newChatter);
-				
-		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-		constraintViolations.stream()
-			.forEach(item -> {
-				jsonArrayBuilder.add(item.getMessage());
-			}
-		);
-		
-		PrintWriter out = response.getWriter();
-		response.setContentType("application/json;charset=UTF-8");
-//		out.print(jsonArrayBuilder.build().toString());
-		
-		Json.createWriter(out).writeArray(jsonArrayBuilder.build());
-		
-		out.close();
+function removeAllMessages() {
+	console.log('removing all messages');
+	const messagesDiv = document.getElementById("messages");
+	while (messagesDiv.firstChild) {
+		messagesDiv.removeChild(messagesDiv.firstChild);
 	}
+}
+
+function addInfoMessage(infoMessage) {
+	removeAllMessages();
+	const messagesDiv = document.getElementById("messages");
+	const messagesElement = document.createElement("div");
+	messagesElement.setAttribute('class', 'alert alert-primary');
+	messagesElement.setAttribute('role', 'alert');			
+	messagesElement.innerHTML = infoMessage;			
+	messagesDiv.appendChild(messagesElement);
+}
+
+function addErrorMessages(errorMessagesArray) {
+	removeAllMessages();
+	const messagesDiv = document.getElementById("messages");
+	const messagesElement = document.createElement("div");
+	messagesElement.setAttribute('class', 'alert alert-danger');
+	messagesElement.setAttribute('role', 'danger');
 	
-	private Set<ConstraintViolation<Jitter>> validate(Jitter newChatter) {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<Jitter>> constraintViolations = validator.validate(newChatter);
-		return constraintViolations;
+	let errorMessage = '<p>Please fix the following errors:</p>';
+	errorMessage = errorMessage.concat('<ul>');
+	errorMessagesArray.forEach(function(item, index, errorMessagesArray) {
+		errorMessage = errorMessage.concat(`<li>${item}</li>`);
+	})
+	errorMessage = errorMessage.concat('</ul>');
+	messagesElement.innerHTML = errorMessage;
+	
+	messagesDiv.appendChild(messagesElement);
+}
+
+
+async function validateFormData() {
+	const loginNameElement = document.getElementById("loginName");
+	const messageElement = document.getElementById("message");
+	const queryParams = `?loginName=${loginNameElement.value}&message=${messageElement.value}`;
+	console.log(queryParams);
+	const url = apiURL + queryParams;
+
+	const response = await fetch(url, {method: 'GET'});
+	const jsonResult = await response.json();
+	console.log(jsonResult);
+	if (jsonResult.length > 0) {
+		addErrorMessages(jsonResult);
+		return new Promise(resolve => {
+			resolve(false)
+		})		
+	} else {
+		return new Promise(resolve => {
+			resolve(true)
+		});
+	}
+}
+
+
+function onSubmit() {
+	const loginNameElement = document.getElementById("loginName");
+	const messageElement = document.getElementById("message");
+
+	const data = new URLSearchParams();
+	for (const pair of new FormData(form)) {
+		data.append(pair[0], pair[1]);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// Retrieve al parameter values passed into this request
-		String loginName = request.getParameter("loginName");
-		String message = request.getParameter("message");
-		
-		// Construct a new Chatter object and set the loginName and message
-		Jitter newChatter = new Jitter();
-		newChatter.setLoginName(loginName);
-		newChatter.setMessage(message);
-		
-		Set<ConstraintViolation<Jitter>> constraintViolations = validate(newChatter);
-		if (constraintViolations.size() == 0) {
-			// Retrieve the list of chatters from application scope
-			ServletContext applicationContext = getServletContext();
-			@SuppressWarnings("unchecked")
-			List<Jitter> chatterList = (List<Jitter>) applicationContext.getAttribute(Constants.JITTERS_APPLICATION_SCOPE);
-			
-			// Add the newChatter to chatterList
-			chatterList.add(newChatter);
-			
-			// Store chatterMap in application scope
-			applicationContext.setAttribute(Constants.JITTERS_APPLICATION_SCOPE, chatterList);			
-			
-			PrintWriter out = response.getWriter();
-			response.setContentType("text/html");
-			out.println("<p>Jitter was posted successfully</p>");
-			out.close();
+	validateFormData().then(returnValue => {
+		if (returnValue == true) {
+			console.log('NO Validation errors');
 
+			fetch(apiURL, { 
+				method: 'POST',
+				body: data
+			})
+			.then(response => response.text())
+			.then(responseText => {
+				//console.log(responseText);
+				addInfoMessage(responseText);
+				loginNameElement.value = '';
+				messageElement.value = '';
+			})
+			.catch(error => {
+				//console.error(error)
+				addErrorMessage(error)
+			});		
+			
 		} else {
-			PrintWriter out = response.getWriter();
-			response.setContentType("text/html");
-			out.println("<p>Please fix the following input errors:</p>");
-			out.println("<ul>");
-			constraintViolations.stream().forEach(item -> out.println("<li>" + item.getMessage() + "</li>"));
-			out.println("</ul>");
-			out.close();
+			console.log('Validation errors')
 		}
-	}
+	});
 
 }
+
+const form = document.getElementById("jitterForm");
+form.addEventListener("submit", function(event) {
+	event.preventDefault();
+});
 
 
 </script>
