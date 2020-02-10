@@ -21,7 +21,14 @@
 	</properties>
 
 	<dependencies>
-
+		<!-- Apache Commons Java Language missing features libraries -->
+		<!-- https://commons.apache.org/proper/commons-lang/-->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>3.9</version>
+		</dependency>
+		
 		<!-- JSON P Provider for Integration Testing -->
 		<dependency>
 		    <groupId>org.glassfish</groupId>
