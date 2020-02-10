@@ -31,11 +31,11 @@
 	    		id="message" 
 	    		name="message" 
 	    		placeholder="enter your message"
-	    	>
-	    	</textarea>
+	    	></textarea>
    		</div>
     						
 		<button type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
+		<button type="button" class="btn btn-light" onclick="removeAllMessages()">Clear</button>
 	</form>
 	
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -43,8 +43,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
 
 <script type="text/javascript">
-const apiURL = 'http://localhost:8080/dmit2015-demos/JitterPostServlet';
-
+const apiURL = '/JitterPostServlet';
 
 function removeAllMessages() {
 	console.log('removing all messages');
@@ -61,6 +60,16 @@ function addInfoMessage(infoMessage) {
 	messagesElement.setAttribute('class', 'alert alert-primary');
 	messagesElement.setAttribute('role', 'alert');			
 	messagesElement.innerHTML = infoMessage;			
+	messagesDiv.appendChild(messagesElement);
+}
+
+function addErrorMessage(errorMessage) {
+	removeAllMessages();
+	const messagesDiv = document.getElementById("messages");
+	const messagesElement = document.createElement("div");
+	messagesElement.setAttribute('class', 'alert alert-danger');
+	messagesElement.setAttribute('role', 'danger');
+	messagesElement.innerHTML = errorMessage;	
 	messagesDiv.appendChild(messagesElement);
 }
 
@@ -105,6 +114,13 @@ async function validateFormData() {
 	}
 }
 
+function handleErrors(response) {
+    if (!response.ok) {
+        console.log(response);
+        throw Error(response.statusText);
+    }
+    return response;
+}
 
 function onSubmit() {
 	const loginNameElement = document.getElementById("loginName");
@@ -115,41 +131,50 @@ function onSubmit() {
 		data.append(pair[0], pair[1]);
 	}
 
-	validateFormData().then(returnValue => {
-		if (returnValue == true) {
-			console.log('NO Validation errors');
-
-			fetch(apiURL, { 
-				method: 'POST',
-				body: data
-			})
-			.then(response => response.text())
-			.then(responseText => {
-				//console.log(responseText);
-				addInfoMessage(responseText);
-				loginNameElement.value = '';
-				messageElement.value = '';
-			})
-			.catch(error => {
-				//console.error(error)
-				addErrorMessage(error)
-			});		
-			
-		} else {
-			console.log('Validation errors')
-		}
-	});
+	fetch(apiURL, { 
+		method: 'POST',
+		body: data
+	})
+	.then(response => {
+    	// Shorthand to check for an HTTP 2xx response status.
+    	// See https://fetch.spec.whatwg.org/#dom-response-ok
+    	if (response.ok) {
+      		return response;
+    	}
+    	// Raise an exception to reject the promise and trigger the outer .catch() handler.
+    	// By default, an error response status (4xx, 5xx) does NOT cause the promise to reject!
+    	/*
+    	for (const pair of response.headers.entries()) {
+   	      console.log(pair[0] + ': ' + pair[1]);
+   	      if (pair[0] == 'errormessage') {
+			throw Error(pair[1]);
+   	   	  }
+   	    }
+    	//console.log(response.headers);
+    	*/
+    	if (response.headers.get("errormessage"))
+    		throw Error(response.headers.get("errormessage"));
+    	else
+    		throw Error(response.statusText);
+	})
+	.then(response => response.text())
+	.then(responseText => {
+		//console.log(responseText);
+		addInfoMessage(responseText);
+		loginNameElement.value = '';
+		messageElement.value = '';
+	})
+	.catch(error => {
+		console.error('Error message:' + error);
+		addErrorMessage(error)
+	});		
 
 }
 
-const form = document.const data = new URLSearchParams();
-for (const pair of new FormData(form)) {
-	data.append(pair[0], pair[1]);
-}getElementById("jitterForm");
+const form = document.getElementById("jitterForm");
 form.addEventListener("submit", function(event) {
 	event.preventDefault();
 });
-
 
 </script>
 
