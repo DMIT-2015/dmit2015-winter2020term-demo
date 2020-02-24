@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>New Job</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<style>
+#canvas-container {
+	position: relative;
+}
+</style>
+
+    </head>
+    <body>
+    
+<div id="app" class="container">
+        
+    <h1>New Job</h1>
+   	
+   	<div v-if="message" v-html="message" 
+   		id="message" class="alert alert-success" role="alert" >
+		{{ message }}
+	</div>
+
+	<div v-if="messages.length > 0" class="alert alert-danger" role="alert" >
+		Please correct the following issues:
+		<ul >
+			<li v-for="singleMessage in messages">
+				{{ singleMessage }}
+			</li>
+		</ul>
+ 	</div>
+ 
+
+   	<form ref="form"
+   		id="jobForm" method="post" action="/servlet/CreateJobServlet" onSubmit="return false;">
+  
+   		<div class="form-group">
+   			<div v-if="errorMap.get('jobId')" class="alert alert-warning" role="alert">{{ errorMap.get('jobId') }}</div>
+   			<label for="jobId">Job ID</label>
+	    	<input v-model="form.jobId"  v-on:change="validateField('jobId',form.jobId)"
+	    		type="text" 
+	    		class="form-control" 
+	    		id="jobId" 
+	    		name="jobId" 
+	    		placeholder="Enter Job ID"
+	    	>
+   		</div>
+ 
+   		<div class="form-group">
+   			<div v-if="errorMap.get('jobTitle')" class="alert alert-warning" role="alert">{{ errorMap.get('jobTitle') }}</div>
+   			<label for="jobTitle">Job Title</label>
+	    	<input v-model="form.jobTitle" v-on:change="validateField('jobTitle',form.jobTitle)"
+	    		type="text" 
+	    		class="form-control" 
+	    		id="jobTitle" 
+	    		name="jobTitle" 
+	    		placeholder="Enter job title"
+	    	>
+   		</div>
+   		
+		<div class="form-group">
+			<div v-if="errorMap.get('minimumSalary')" class="alert alert-warning" role="alert">{{ errorMap.get('minimumSalary') }}</div>
+   			<label for="minimumSalary">Minimum Salary</label>
+	    	<input v-model="form.minimumSalary" v-on:change="validateField('minimumSalary',form.minimumSalary)"
+	    		type="number" 
+	    		class="form-control" 
+	    		id="minimumSalary" 
+	    		name="minimumSalary" 
+	    		placeholder="Enter minimum salary"
+	    	>
+   		</div>
+  
+   		<div class="form-group">
+   			<div v-if="errorMap.get('maximumSalary')" class="alert alert-warning" role="alert">{{ errorMap.get('maximumSalary') }}</div>
+   			<label for="maximumSalary">Maximum Salary</label>
+	    	<input v-model="form.maximumSalary" v-on:change="validateField('maximumSalary',form.maximumSalary)"
+	    		type="number" 
+	    		class="form-control" 
+	    		id="maximumSalary" 
+	    		name="maximumSalary" 
+	    		placeholder="Enter maximumSalary"
+	    	>
+   		</div>   		
+   				  
+   		<button v-on:click="submit()"
+   			type="submit" class="btn btn-primary">Add</button>
+   			
+   		<button v-on:click="clearMessages()"
+   			type="button" class="btn btn-danger" >Clear</button>		
+   		
+   		<button v-on:click="fetchJobs()"
+   			type="button" class="btn btn-info" >View Jobs</button>			
+   			
+	
+	<table v-if="jobs.length > 0" id="jobsTable" class="table table-sm table-striped table-hover" >
+	    <thead>
+	        <tr>
+	            <th >Job ID</th>
+	            <th >Job Title</th>
+	            <th class="text-right">Minimum Salary</th>
+	            <th class="text-right">Maximum Salary</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr v-for="singleJob in jobs">
+	            <td >{{ singleJob.jobId }}</td>
+	            <td >{{ singleJob.jobTitle }}</td>
+	            <td class="text-right">{{ singleJob.minimumSalary }}</td>
+	            <td class="text-right">{{ singleJob.maximumSalary }}</td>
+	        </tr>
+	    </tbody>
+	</table> 
+	   			
+   			
+   	</form>
+ 
+   
+</div>
+
+	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+
+var app = new Vue({
+	el: '#app',
+	// data for #app
+    data: {
+        message: '',
+       	messages: [],
+        form: {
+			jobId: '',
+			jobTitle: '',
+			minimumSalary: '',
+			maximumSalary: '',
+        },
+        errorMap: new Map(),
+        jobs: [],
+        
+     },
+     // define methods
+     methods: {
+		clearMessages: function() {
+			this.message = '';
+			this.messages = [];
+			this.form.jobId = '';
+			this.form.jobTitle = '';
+			this.form.minimumSalary = '';
+			this.form.maximumSalary = '';
+			this.jobs = [];
+		},	      
+
+		validateField: function(fieldName, fieldValue) {
+
+			this.errorMap.set(fieldName,'');
+			this.messages = Array.from(this.errorMap.values()).filter(value => value.length > 0);
+			
+			const queryParams = `?${fieldName}=${fieldValue}`;
+			const apiURL = '/servlet/CreateJobServlet' + queryParams;
+
+			fetch(apiURL, {method: 'GET'})
+			.then(response => {
+				console.log(response);
+				if (response.status == 204) {
+					this.message = '';
+					this.messages = [];
+					this.errorMap.clear();
+				} else { 
+					response.json().then(jsonArray => {
+						for (let jsonObject of jsonArray) {
+							for (let [key, value] of Object.entries(jsonObject)) {
+								this.errorMap.set(key, value);
+								this.messages.push(value);
+							}
+						}
+					});
+				}
+			})
+			.catch(error => console.error(error));
+		},
+		
+		submit: function() {
+			const apiURL = '/servlet/CreateJobServlet';
+			
+			const data = new URLSearchParams();
+			for (const pair of new FormData(this.$refs.form)) {
+				data.append(pair[0], pair[1]);
+				console.log(pair[0] + ':' + pair[1]);
+			}
+				
+			fetch(apiURL, {
+				method: 'POST',
+				body: data
+			})
+			.then(handleResponse)
+			.then(responseJson => {
+				console.log(responseJson);
+
+				this.errorMap.clear();
+				this.messages = [];
+				
+				this.message = `<p>Create job was successful.</p> \
+					<ul> \
+						<li>JobID: ${responseJson.jobId}</li> \														
+						<li>Job Title: ${responseJson.jobTitle}</li> \														
+						<li>Minimum Salary: ${responseJson.minimumSalary} \
+						<li>Maximum Salary: ${responseJson.maximumSalary} \
+					</ul>`;
+
+				this.jobs.push({"jobId": responseJson.jobId, "jobTitle": responseJson.jobTitle, "minimumSalary": responseJson.minimumSalary, "maximumSalary": responseJson.maximumSalary});
+			})
+			.catch(error => {
+				console.error(error);
+				if (error.status == 400) {
+					this.messages = [];
+					for (let index = 0; index < Object.keys(error).length - 2; index++) {
+						console.log(error[index]);		
+						this.messages.push( Object.values(error[index])[0] );
+					}
+				}
+			});			
+     	},
+
+     	fetchJobs: function() {
+     		fetch('./jobs.csv')
+    		.then(response => response.text())
+    		.then(data => {
+        		console.log(data);
+        		const rows = data.split("\n");
+        		rows.forEach(currentRow => {
+					const singleField = currentRow.split(",");
+					this.jobs.push({"jobId": singleField[0], "jobTitle": singleField[1], "minimumSalary": singleField[2],"maximumSalary": singleField[3]});
+            	});
+            	this.jobs.shift();	// remove the header
+            	console.log(this.jobs);
+        	});
+        },
+        
+     },
+})
+
+function formatCurrency(value) {
+	return '$' + value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
+function handleResponse(response) {
+	return response.json()
+		.then(json => {
+			if (response.ok) {
+				return json
+			} else {
+				let error = Object.assign({}, json, {
+					status: response.status,
+					statusText: response.statusText
+				})
+				return Promise.reject(error)
+			}
+	})
+}
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>New Employee</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<style>
+#canvas-container {
+	position: relative;
+}
+</style>
+
+    </head>
+    <body>
+    
+<div id="app" class="container">
+        
+    <h1>New Employee</h1>
+   	
+   	<div v-if="message" id="messages" class="alert alert-success" role="alert" >
+		{{ message }}
+	</div>
+
+	<div v-if="messages.length > 0" class="alert alert-danger" role="alert" >
+		Please correct the following issues:
+		<ul >
+			<li v-for="singleMessage in messages">
+				{{ singleMessage }}
+			</li>
+		</ul>
+ 	</div>
+ 
+
+   	<form ref="form"
+   		id="employeeForm" method="post" action="/servlet/AddEmployeeServlet" onSubmit="return false;">
+  
+   		<div class="form-group">
+   			<div v-if="errorMap.get('employeeId')" class="alert alert-danger" role="alert">{{ errorMap.get('employeeId') }}</div>
+   			<label for="employeeId">Employee ID</label>
+	    	<input v-model="form.employeeId"  v-on:change="validateField('employeeId',form.employeeId)"
+	    		type="number" 
+	    		class="form-control" 
+	    		id="employeeId" 
+	    		name="employeeId" 
+	    		placeholder="Enter EmployeeID"
+	    	>
+   		</div>
+
+   		<div class="form-group">
+   			<div v-if="errorMap.get('name')" class="alert alert-danger" role="alert">{{ errorMap.get('name') }}</div>
+   			<label for="name">Employee Name</label>
+	    	<input v-model="form.name" v-on:change="validateField('name',form.name)"
+	    		type="text" 
+	    		class="form-control" 
+	    		id="name" 
+	    		name="name" 
+	    		placeholder="Enter name"
+	    	>
+   		</div>
+ 
+   		<div class="form-group">
+   			<div v-if="errorMap.get('email')" class="alert alert-danger" role="alert">{{ errorMap.get('email') }}</div>
+   			<label for="email">Employee Email</label>
+	    	<input v-model="form.email" v-on:change="validateField('email',form.email)"
+	    		type="email" 
+	    		class="form-control" 
+	    		id="email" 
+	    		name="email" 
+	    		placeholder="Enter email address"
+	    	>
+   		</div>
+   		
+		<div class="form-group">
+			<div v-if="errorMap.get('hireDate')" class="alert alert-danger" role="alert">{{ errorMap.get('hireDate') }}</div>
+   			<label for="hireDate">Hire Date</label>
+	    	<input v-model="form.hireDate" v-on:change="validateField('hireDate',form.hireDate)"
+	    		type="date" 
+	    		class="form-control" 
+	    		id="hireDate" 
+	    		name="hireDate" 
+	    		placeholder="Enter hire date"
+	    	>
+   		</div>
+  
+   		<div class="form-group">
+   			<div v-if="errorMap.get('age')" class="alert alert-danger" role="alert">{{ errorMap.get('age') }}</div>
+   			<label for="age">Employee Age</label>
+	    	<input v-model="form.age" v-on:change="validateField('age',form.age)"
+	    		type="number" 
+	    		class="form-control" 
+	    		id="age" 
+	    		name="age" 
+	    		placeholder="Enter age"
+	    	>
+   		</div>   		
+ 
+   		<div class="form-group">
+   			<div v-if="errorMap.get('postalCode')" class="alert alert-danger" role="alert">{{ errorMap.get('postalCode') }}</div>
+   			<label for="postalCode">Postal Code</label>
+	    	<input v-model="form.password" v-on:change="validateField('postalCode',form.postalCode)"
+	    		type="text" 
+	    		class="form-control" 
+	    		id="postalCode" 
+	    		name="postalCode" 
+	    		placeholder="Enter Postal Code"
+	    	>
+   		</div>
+    		   		
+   		<div class="form-group">
+   			<div v-if="errorMap.get('password')" class="alert alert-danger" role="alert">{{ errorMap.get('password') }}</div>
+   			<label for="password">Password</label>
+	    	<input v-model="form.password" v-on:change="validateField('password',form.password)"
+	    		type="password" 
+	    		class="form-control" 
+	    		id="password" 
+	    		name="password" 
+	    		placeholder="Enter password"
+	    	>
+   		</div>
+   		
+   		<div class="form-group">
+   			<div v-if="errorMap.get('confirmedPassword')" class="alert alert-danger" role="alert">{{ errorMap.get('confirmedPassword') }}</div>
+   			<label for="confirmedPassword">Confirmed Password</label>
+	    	<input v-model="form.confirmedPassword" 
+	    		type="text" 
+	    		class="form-control" 
+	    		id="confirmedPassword" 
+	    		name="confirmedPassword" 
+	    		placeholder="Re-enter password"
+	    	>
+   		</div>
+   				  
+   		<button v-on:click="addEmployee()"
+   			type="submit" class="btn btn-primary">Add</button>
+   			
+   		<button v-on:click="clearMessage()"
+   			type="button" class="btn btn-danger" >Clear</button>		
+   	</form>
+ 
+   
+</div>
+
+	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+
+var app = new Vue({
+	el: '#app',
+	// data for #app
+    data: {
+        message: '',
+       	messages: [],
+        form: {
+			age: 18,
+			confirmedPassword: '',
+			email: '',
+			employeeId: 123456789,
+			hireDate: '2020-07-02',
+			hourlyWage: 15.00,
+			name: '',
+			password: '',
+			postalCode: ''
+        },
+        errorMap: new Map(),
+        
+     },
+     // define methods
+     methods: {
+		clearMessage: function() {
+			this.message = '';
+			this.messages = [];
+		},	      
+
+		validateField: function(fieldName, fieldValue) {
+
+			this.errorMap.set(fieldName,'');
+			this.messages = Array.from(this.errorMap.values()).filter(value => value.length > 0);
+			
+			const queryParams = `?${fieldName}=${fieldValue}`;
+			const apiURL = '/servlet/AddEmployeeServlet' + queryParams;
+
+			fetch(apiURL, {method: 'GET'})
+			.then(response => {
+				console.log(response);
+				if (response.status == 204) {
+					this.message = '';
+				} else { 
+					response.json().then(jsonArray => {
+						for (let jsonObject of jsonArray) {
+							for (let [key, value] of Object.entries(jsonObject)) {
+								console.log(`${key}: ${value}`);
+								//this.message = value;
+								this.errorMap.set(key, value);
+								this.messages.push(value);
+							}
+						}
+					});
+				}
+			})
+			.catch(error => console.error(error));
+		},
+		
+		addEmployee: function() {
+			const apiURL = '/servlet/AddEmployeeServlet';
+			
+			const data = new URLSearchParams();
+			for (const pair of new FormData(this.$refs.form)) {
+				data.append(pair[0], pair[1]);
+				console.log(pair[0] + ':' + pair[1]);
+			}
+				
+			fetch(apiURL, {
+				method: 'POST',
+				body: data
+			})
+			.then(handleResponse)
+			.then(responseJson => {
+				console.log(responseJson);
+																			
+			})
+			.catch(error => {
+				console.error(error);
+				if (error.status == 400) {
+					console.log('error length:' + Object.keys(error).length);
+					this.messages = [];
+					for (let index = 0; index < Object.keys(error).length - 2; index++) {
+						console.log(error[index]);		
+						this.messages.push( Object.values(error[index])[0] );
+					}
+				}
+			});			
+     	}
+     },
+})
+
+function formatCurrency(value) {
+	return '$' + value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
+function handleResponse(response) {
+	return response.json()
+		.then(json => {
+			if (response.ok) {
+				return json
+			} else {
+				//return Promise.reject(json)
+				let error = Object.assign({}, json, {
+					status: response.status,
+					statusText: response.statusText
+				})
+				return Promise.reject(error)
+			}
+	})
+}
+</script>
+
+    </body>
+</html>
