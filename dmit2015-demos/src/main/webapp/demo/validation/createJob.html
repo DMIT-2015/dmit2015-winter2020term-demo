@@ -5,13 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
      
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-<style>
-#canvas-container {
-	position: relative;
-}
-</style>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
     </head>
     <body>
@@ -39,9 +33,8 @@
    		id="jobForm" method="post" action="/servlet/CreateJobServlet" onSubmit="return false;">
   
    		<div class="form-group">
-   			<div v-if="errorMap.get('jobId')" class="alert alert-warning" role="alert">{{ errorMap.get('jobId') }}</div>
    			<label for="jobId">Job ID</label>
-	    	<input v-model="form.jobId"  v-on:change="validateField('jobId',form.jobId)"
+	    	<input v-model="form.jobId" 
 	    		type="text" 
 	    		class="form-control" 
 	    		id="jobId" 
@@ -51,9 +44,8 @@
    		</div>
  
    		<div class="form-group">
-   			<div v-if="errorMap.get('jobTitle')" class="alert alert-warning" role="alert">{{ errorMap.get('jobTitle') }}</div>
    			<label for="jobTitle">Job Title</label>
-	    	<input v-model="form.jobTitle" v-on:change="validateField('jobTitle',form.jobTitle)"
+	    	<input v-model="form.jobTitle" 
 	    		type="text" 
 	    		class="form-control" 
 	    		id="jobTitle" 
@@ -63,9 +55,8 @@
    		</div>
    		
 		<div class="form-group">
-			<div v-if="errorMap.get('minimumSalary')" class="alert alert-warning" role="alert">{{ errorMap.get('minimumSalary') }}</div>
    			<label for="minimumSalary">Minimum Salary</label>
-	    	<input v-model="form.minimumSalary" v-on:change="validateField('minimumSalary',form.minimumSalary)"
+	    	<input v-model="form.minimumSalary" 
 	    		type="number" 
 	    		class="form-control" 
 	    		id="minimumSalary" 
@@ -75,9 +66,8 @@
    		</div>
   
    		<div class="form-group">
-   			<div v-if="errorMap.get('maximumSalary')" class="alert alert-warning" role="alert">{{ errorMap.get('maximumSalary') }}</div>
    			<label for="maximumSalary">Maximum Salary</label>
-	    	<input v-model="form.maximumSalary" v-on:change="validateField('maximumSalary',form.maximumSalary)"
+	    	<input v-model="form.maximumSalary" 
 	    		type="number" 
 	    		class="form-control" 
 	    		id="maximumSalary" 
@@ -96,24 +86,24 @@
    			type="button" class="btn btn-info" >View Jobs</button>			
    			
 	
-	<table v-if="jobs.length > 0" id="jobsTable" class="table table-sm table-striped table-hover" >
-	    <thead>
-	        <tr>
-	            <th >Job ID</th>
-	            <th >Job Title</th>
-	            <th class="text-right">Minimum Salary</th>
-	            <th class="text-right">Maximum Salary</th>
-	        </tr>
-	    </thead>
-	    <tbody>
-	        <tr v-for="singleJob in jobs">
-	            <td >{{ singleJob.jobId }}</td>
-	            <td >{{ singleJob.jobTitle }}</td>
-	            <td class="text-right">{{ singleJob.minimumSalary }}</td>
-	            <td class="text-right">{{ singleJob.maximumSalary }}</td>
-	        </tr>
-	    </tbody>
-	</table> 
+		<table v-if="jobs.length > 0" id="jobsTable" class="table table-sm table-striped table-hover" >
+		    <thead>
+		        <tr>
+		            <th >Job ID</th>
+		            <th >Job Title</th>
+		            <th class="text-right">Minimum Salary</th>
+		            <th class="text-right">Maximum Salary</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr v-for="singleJob in jobs">
+		            <td >{{ singleJob.jobId }}</td>
+		            <td >{{ singleJob.jobTitle }}</td>
+		            <td class="text-right">{{ singleJob.minimumSalary }}</td>
+		            <td class="text-right">{{ singleJob.maximumSalary }}</td>
+		        </tr>
+		    </tbody>
+		</table> 
 	   			
    			
    	</form>
@@ -158,35 +148,6 @@ var app = new Vue({
 			this.form.maximumSalary = '';
 			this.jobs = [];
 		},	      
-
-		validateField: function(fieldName, fieldValue) {
-
-			this.errorMap.set(fieldName,'');
-			this.messages = Array.from(this.errorMap.values()).filter(value => value.length > 0);
-			
-			const queryParams = `?${fieldName}=${fieldValue}`;
-			const apiURL = '/servlet/CreateJobServlet' + queryParams;
-
-			fetch(apiURL, {method: 'GET'})
-			.then(response => {
-				console.log(response);
-				if (response.status == 204) {
-					this.message = '';
-					this.messages = [];
-					this.errorMap.clear();
-				} else { 
-					response.json().then(jsonArray => {
-						for (let jsonObject of jsonArray) {
-							for (let [key, value] of Object.entries(jsonObject)) {
-								this.errorMap.set(key, value);
-								this.messages.push(value);
-							}
-						}
-					});
-				}
-			})
-			.catch(error => console.error(error));
-		},
 		
 		submit: function() {
 			const apiURL = '/servlet/CreateJobServlet';
