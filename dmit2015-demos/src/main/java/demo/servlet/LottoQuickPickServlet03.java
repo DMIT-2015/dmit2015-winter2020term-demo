@@ -45,7 +45,7 @@ public class LottoQuickPickServlet03 extends HttpServlet {
 			response.setContentType("application/json;charset=UTF-8");
 			Jsonb jsonb = JsonbBuilder.create();
 			String responseBodyJson = jsonb.toJson(quickPick);		
-			response.getWriter().println(responseBodyJson.toString());
+			response.getWriter().println(responseBodyJson);
 		}
 		
 	}

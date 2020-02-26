@@ -21,7 +21,14 @@
 		role="alert">
 	</div>
 	
-	
+	<div v-if="messages.length > 0" class="alert alert-danger" role="alert" >
+		Please correct the following issues:
+		<ul >
+			<li v-for="singleMessage in messages">
+				{{ singleMessage }}
+			</li>
+		</ul>
+ 	</div>
 
 	<table v-if="quickPicks" class="table table-sm">
 		<tbody>
@@ -86,6 +93,7 @@ var app = new Vue({
 
     data: {
         message: '',
+    	messages: [],
         form: {
         	game: 'LOTTO_MAX',
         	quantity: 1,
@@ -122,11 +130,13 @@ var app = new Vue({
 				
 				this.message = `<p>Here are your \
 					${responseJson.quantity} \
+					${responseJson.game} \
 					quick picks:</p>`
 
 				this.quickPicks = responseJson.quickPicks;
 			})
 			.catch(error => {
+				this.message = '';
 				console.error(error);
 				if (error.status == 400) {
 					this.messages = [];

@@ -62,7 +62,7 @@ public class AddEmployeeServlet extends HttpServlet {
 			PrintWriter out = response.getWriter();
 			Jsonb jsonb = JsonbBuilder.create();
 			String responseBodyJson = jsonb.toJson(newEmployee);		
-			out.println(responseBodyJson.toString());
+			out.println(responseBodyJson);
 			out.close();
 		}
 	}

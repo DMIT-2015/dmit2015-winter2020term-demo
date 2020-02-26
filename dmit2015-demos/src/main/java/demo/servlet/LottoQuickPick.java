@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class LottoQuickPick {
 
-	private LotteryType game;
+	private LotteryType game = LotteryType.LOTTO_MAX;
 	
 	@Min(value = 1, message = "Quantity must be between 1 and 10")
 	@Max(value = 10, message = "Quantity must be between 1 and 10")

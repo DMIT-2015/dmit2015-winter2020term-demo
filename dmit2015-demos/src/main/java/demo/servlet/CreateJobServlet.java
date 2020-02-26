@@ -49,7 +49,7 @@ public class CreateJobServlet extends HttpServlet {
 			response.setContentType("application/json;charset=UTF-8");
 			Jsonb jsonb = JsonbBuilder.create();
 			String responseBodyJson = jsonb.toJson(newJob);		
-			response.getWriter().println(responseBodyJson.toString());
+			response.getWriter().println(responseBodyJson);
 		}
 	}
 
