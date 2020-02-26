@@ -304,7 +304,7 @@ public class ServletBeanValidationHelper {
 						}
 							break;	
 							
-						case "ca.nait.dmit.demo.servlet.LotteryType": {							
+						case "demo.servlet.LotteryType": {							
 							// Set the typeInstance field to the parameter value
 							try {
 								LotteryType lottoType = LotteryType.valueOf(stringValue);
