@@ -21,6 +21,15 @@
 	</properties>
 
 	<dependencies>
+		
+		<!-- https://mvnrepository.com/artifact/org.eclipse/yasson -->
+		<dependency>
+		    <groupId>org.eclipse</groupId>
+		    <artifactId>yasson</artifactId>
+		    <version>1.0.6</version>
+		    <scope>test</scope>
+		</dependency>
+		
 		<!-- Apache Commons Java Language missing features libraries -->
 		<!-- https://commons.apache.org/proper/commons-lang/-->
 		<dependency>

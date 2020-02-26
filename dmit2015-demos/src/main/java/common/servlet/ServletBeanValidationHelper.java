@@ -23,6 +23,8 @@ import javax.validation.ValidatorFactory;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import demo.servlet.LotteryType;
+
 /**
  * A helper class for use with Servlets to simply the task of retrieving parameter values, converting the parameter values to the required data types,
  * and setting a data object with the converted values.
@@ -285,7 +287,7 @@ public class ServletBeanValidationHelper {
 						}
 							break;
 							
-						case "java.lang.String":
+						case "java.lang.String": {
 							// Set the typeInstance field to the parameter value
 							String methodName = "set" + parameter.getKey().substring(0, 1).toUpperCase() + parameter.getKey().substring(1);
 							try {
@@ -299,7 +301,35 @@ public class ServletBeanValidationHelper {
 								
 								logger.info("Exception: " + ExceptionUtils.getStackTrace(ex));
 							}
+						}
 							break;	
+							
+						case "ca.nait.dmit.demo.servlet.LotteryType": {							
+							// Set the typeInstance field to the parameter value
+							try {
+								LotteryType lottoType = LotteryType.valueOf(stringValue);
+								String methodName = "set" + parameter.getKey().substring(0, 1).toUpperCase() + parameter.getKey().substring(1);
+								try {
+									Method setValueMethod = classType.getDeclaredMethod(methodName, LotteryType.class);
+									setValueMethod.invoke(typeInstance, lottoType);
+								} catch (Exception ex) {
+									JsonObject exceptionJsonObject = Json.createObjectBuilder()
+										.add(parameter.getKey(), ex.getMessage())
+										.build();
+									jsonArrayBuilder.add(exceptionJsonObject);
+									
+									logger.info("Exception: " + ExceptionUtils.getStackTrace(ex));
+								}
+							} catch (Exception ex) {
+								JsonObject exceptionJsonObject = Json.createObjectBuilder()
+									.add(parameter.getKey(), ex.getMessage())
+									.build();
+								jsonArrayBuilder.add(exceptionJsonObject);
+								
+								logger.info("Exception: " + ExceptionUtils.getStackTrace(ex));
+							}
+						}
+						break;		
 					}
 					
 				}
