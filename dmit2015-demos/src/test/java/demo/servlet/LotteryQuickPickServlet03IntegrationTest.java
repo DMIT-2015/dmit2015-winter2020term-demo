@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import demo.servlet.LottoQuickPick;
 
-public class LotteryQuickPickServlet03ntegrationTest {
+public class LotteryQuickPickServlet03IntegrationTest {
     private static String URL;
 
     @BeforeAll

@@ -19,7 +19,7 @@ public class LottoQuickPick {
 	@Max(value = 10, message = "Quantity must be between 1 and 10")
 	private int quantity;
 		
-	public String getSinglePick() {
+	public String singlePick() {
 		LotteryCanada lotto = new LotteryCanada(game);
 		Integer[] quickPick = lotto.doOneQuickPick();
 		return Arrays.stream(quickPick)
