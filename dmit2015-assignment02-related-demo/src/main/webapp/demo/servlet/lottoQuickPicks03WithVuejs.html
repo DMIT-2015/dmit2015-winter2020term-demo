@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lotto Quick Picks</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+<div id="app" class="container">
+
+	<div class="jumbotron">
+		<h1>Lotto Quick Picks with Vue.js</h1>
+	</div>
+
+	<div
+		v-if="message"
+		v-html="message"
+		id="messages"
+		class="alert alert-primary"
+		role="alert">
+	</div>
+	
+	<div v-if="messages.length > 0" class="alert alert-danger" role="alert" >
+		Please correct the following issues:
+		<ul >
+			<li v-for="singleMessage in messages">
+				{{ singleMessage }}
+			</li>
+		</ul>
+ 	</div>
+
+	<table v-if="quickPicks" class="table table-sm">
+		<tbody>
+		  <tr v-for="singleQuickPick in quickPicks">
+		   	<td  >
+		   		{{ singleQuickPick }}
+		   	</td>
+		  </tr>
+		</tbody>
+	</table>
+
+	<form ref="form" v-on:submit.prevent
+		method="post" action="/servlet/LottoQuickPickServlet03" >
+
+		<fieldset class="form-group">
+	    	<div class="row">
+		      <legend class="col-form-label col-sm-2 pt-0">Lottery Game:</legend>
+		      <div class="col-sm-10">
+		        <div class="form-check">
+		          <input v-model="form.game"
+		          	class="form-check-input" type="radio" name="game" id="lottoMax" value="LOTTO_MAX" checked="checked">
+			  <label class="form-check-label" for="lottoMax">LOTTO MAX</label>
+		        </div>
+		        <div class="form-check">
+		         <input  v-model="form.game"
+		         	class="form-check-input" type="radio" name="game" id="lotto649" value="LOTTO_649">
+			  		<label class="form-check-label" for="lotto649">LOTTO 6/49</label>
+		        </div>
+		      </div>
+		    </div>
+	  	</fieldset>
+
+		<div class="form-group row">
+			<label for="quantity" class="col-sm-2 col-form-label">Quantity:</label>
+			<div class="col-sm-10">
+				<input v-model="form.quantity"
+					type="number" class="form-control" id="quantity" name="quantity" min="1" max="10" value="1"/>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<div class="col-sm-10 offset-sm-2">
+				<button @click.prevent="onSubmit" type="submit" class="btn btn-primary" v-on:click="onSubmit()">Submit</button>
+				<button type="button" class="btn btn-danger" v-on:click="onClear()">Clear</button>
+			</div>
+		</div>
+	</form>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+
+var app = new Vue({
+	el: '#app',
+
+    data: {
+        message: '',
+    	messages: [],
+        form: {
+        	game: 'LOTTO_MAX',
+        	quantity: 1,
+        },
+        quickPicks: [],
+        errorMap: new Map(),
+     },
+
+     // define methods
+     methods: {
+		onClear: function() {
+			this.message = '';
+			this.quickPicks = [];
+		},
+
+		onSubmit() {
+			const apiURL = '/servlet/LottoQuickPickServlet03';
+
+			const data = new URLSearchParams();
+			for (const pair of new FormData(this.$refs.form)) {
+				data.append(pair[0], pair[1]);
+			}
+
+			fetch(apiURL, {
+				method: 'POST',
+				body: data
+			})
+			.then(handleResponse)
+			.then(responseJson => {
+				console.log(responseJson);
+
+				this.errorMap.clear();
+				this.messages = [];
+				
+				this.message = `<p>Here are your \
+					${responseJson.quantity} \
+					${responseJson.game} \
+					quick picks:</p>`
+
+				this.quickPicks = responseJson.quickPicks;
+			})
+			.catch(error => {
+				this.message = '';
+				console.error(error);
+				if (error.status == 400) {
+					this.messages = [];
+					for (let index = 0; index < Object.keys(error).length - 2; index++) {
+						console.log(error[index]);		
+						this.messages.push( Object.values(error[index])[0] );
+					}
+				}
+			});	
+
+		}
+     },
+})
+
+function handleResponse(response) {
+	return response.json()
+		.then(json => {
+			if (response.ok) {
+				return json
+			} else {
+				let error = Object.assign({}, json, {
+					status: response.status,
+					statusText: response.statusText
+				})
+				return Promise.reject(error)
+			}
+	})
+}
+</script>
+
+</body>
+</html>

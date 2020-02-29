@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EPS Neighbourhood Criminal Occurrences</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+<div id="app" class="container">
+
+	<div class="jumbotron">
+		<h1>EPS Neighbourhood Criminal Occurrences</h1>
+	</div>
+
+	<div
+		v-if="infoMessage"
+		v-html="infoMessage"
+		id="infoMessage"
+		class="alert alert-info"
+		role="alert">
+	</div>
+	
+	<div v-if="errorMessages.length > 0" class="alert alert-danger" role="alert" >
+		<ul >
+			<li v-for="singleMessage in errorMessages">
+				{{ singleMessage }}
+			</li>
+		</ul>
+ 	</div>
+  	
+	<table v-if="occurrences.length > 0"  id="resultList" class="table table-sm table-striped table-hover" >
+	    <thead>
+	        <tr>
+	            <th class="text-left">Occurrence Violation Type Group</th>
+	            <th class="text-right">Occurrence Reported Year</th>
+	            <th class="text-left">Occurrence Reported Quarter</th>
+	            <th class="text-right">Occurrence Reported Month</th>
+	            <th class="text-right">Pccurrences</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr v-for="item in occurrences">
+	            <td class="text-left">{{ item.occurrenceViolationTypeGroup }}</td>
+	            <td class="text-right">{{ item.occurrenceReportedYear }}</td>
+	            <td class="text-left">{{ item.occurrenceReportedQuarter }}</td>
+	            <td class="text-right">{{ item.occurrenceReportedMonth }}</td>
+	            <td class="text-right">{{ item.occurrences }}</td>
+	        </tr>
+	    </tbody>
+	</table>  
+	 
+
+	<form ref="form" v-on:submit.prevent
+		method="post" action="/servlet/LookupEPSNeighbourhoodCriminalOccurencesByNeighbourhoodDescriptionServlet" >
+
+		<div class="form-group row">
+			<label for="neighbourhoodDescription" class="col-sm-2 col-form-label">Neighbourhood:</label>
+			<div class="col-sm-10">
+				<select v-model="form.selectedNeighbourhood"
+					class="form-control" id="neighbourhoodDescription" name="neighbourhoodDescription">
+					<option v-for="option in neighbourhoods" v-bind:value="option">
+						{{ option }}
+					</option>
+				</select> 
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<div class="col-sm-10 offset-sm-2">
+				<button v-on:click="submit()" 
+					type="submit" class="btn btn-primary" >
+					Submit
+				</button>	
+				<button type="button" class="btn btn-secondary" v-on:click="clearMessages">Clear</button>
+			</div>
+		</div>
+	</form>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+
+var app = new Vue({
+	el: '#app',
+
+    data: {
+        infoMessage: '',
+    	errorMessages: [], 
+    	neighbourhoods: [],
+        form: {
+        	selectedNeighbourhood: '',
+        },
+        occurrences: [],
+        errorMap: new Map(),
+     },
+
+  	// Vue LifeCyle Hooks: created, mounted, updated, destroyed
+     mounted: function() {
+    	const apiURL = '/servlet/LookupEPSNeighbourhoodCriminalOccurencesByNeighbourhoodDescriptionServlet';
+			
+		fetch(apiURL, {method: 'GET'})
+		.then(handleResponse)
+		.then(responseJson => {
+			console.log(responseJson);
+			this.neighbourhoods = responseJson;
+		})
+		.catch(error => {
+			console.error(error);
+		});			
+     },
+     
+     // define methods
+     methods: {
+		clearMessages: function() {
+			this.infoMessage = '';
+			this.errorMessages = [];	
+			this.errorMap.clear();
+			this.occurrences = [];
+		},
+
+		submit: function() {
+			const apiURL = '/servlet/LookupEPSNeighbourhoodCriminalOccurencesByNeighbourhoodDescriptionServlet';
+
+			const data = new URLSearchParams();
+			for (const pair of new FormData(this.$refs.form)) {
+				data.append(pair[0], pair[1]);
+			}
+
+			this.clearMessages();
+			
+			fetch(apiURL, {
+				method: 'POST',
+				body: data
+			})
+			.then(handleResponse)
+			.then(responseJson => {
+				console.log(responseJson);
+				
+				this.occurrences = responseJson.neighbourhoodOccurrences;
+				
+			})
+			.catch(error => {
+				if (error.status == 400) {
+					for (let index = 0; index < Object.keys(error).length - 2; index++) {
+						console.log(error[index]);		
+						this.errorMessages.push( Object.values(error[index])[0] );
+					}
+				}
+			});	
+
+		}
+     },
+})
+
+function handleResponse(response) {
+	return response.json()
+		.then(json => {
+			if (response.ok) {
+				return json
+			} else {
+				let error = Object.assign({}, json, {
+					status: response.status,
+					statusText: response.statusText
+				})
+				return Promise.reject(error)
+			}
+	})
+}
+</script>
+
+</body>
+</html>

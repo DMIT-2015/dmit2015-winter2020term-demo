@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>New Job</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<style>
+#canvas-container {
+	position: relative;
+}
+</style>
+
+    </head>
+    <body>
+    
+<div id="app" class="container">
+        
+    <h1>Job Listings</h1>
+   	
+   	<div v-if="message" v-html="message" 
+   		id="message" class="alert alert-success" role="alert" >
+		{{ message }}
+	</div>
+
+ 
+	<table v-if="jobs.length > 0" id="jobsTable" class="table table-sm table-striped table-hover" >
+	    <thead>
+	        <tr>
+	            <th >Job ID</th>
+	            <th >Job Title</th>
+	            <th class="text-right">Minimum Salary</th>
+	            <th class="text-right">Maximum Salary</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr v-for="singleJob in jobs">
+	            <td >{{ singleJob.jobId }}</td>
+	            <td >{{ singleJob.jobTitle }}</td>
+	            <td class="text-right">{{ singleJob.minimumSalary }}</td>
+	            <td class="text-right">{{ singleJob.maximumSalary }}</td>
+	        </tr>
+	    </tbody>
+	</table>   
+   
+</div>
+
+	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+
+var app = new Vue({
+	el: '#app',
+	// data for #app
+    data: {
+        message: '',
+       	jobs: [],
+        errorMap: new Map(),
+        
+     },
+  	// Vue LifeCyle Hooks: created, mounted, updated, destroyed
+     mounted: function() {
+    	fetch('./jobs.csv')
+    		.then(response => response.text())
+    		.then(data => {
+        		console.log(data);
+        		const rows = data.split("\n");
+        		rows.forEach(currentRow => {
+					const singleField = currentRow.split(",");
+					this.jobs.push({"jobId": singleField[0], "jobTitle": singleField[1], "minimumSalary": singleField[2],"maximumSalary": singleField[3]});
+            	});
+            	this.jobs.shift();	// remove the header
+            	console.log(this.jobs);
+        	});
+    	
+     },
+     
+     // define methods
+     methods: {
+		clearMessages: function() {
+			this.message = '';
+			this.jobs = [];
+		},	      
+
+     },
+})
+
+
+
+function handleResponse(response) {
+	return response.json()
+		.then(json => {
+			if (response.ok) {
+				return json
+			} else {
+				let error = Object.assign({}, json, {
+					status: response.status,
+					statusText: response.statusText
+				})
+				return Promise.reject(error)
+			}
+	})
+}
+</script>
+
+    </body>
+</html>

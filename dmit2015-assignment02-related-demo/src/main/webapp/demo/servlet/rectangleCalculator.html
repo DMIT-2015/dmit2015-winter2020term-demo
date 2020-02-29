@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Rectangle Calculator</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+<div id="app" class="container">
+
+	<div class="jumbotron">
+		<h1>Rectangle Calculator</h1>
+	</div>
+
+	<div
+		v-if="infoMessage"
+		v-html="infoMessage"
+		id="infoMessage"
+		class="alert alert-info"
+		role="alert">
+	</div>
+	
+	<div v-if="errorMessages.length > 0" class="alert alert-danger" role="alert" >
+		<ul >
+			<li v-for="singleMessage in errorMessages">
+				{{ singleMessage }}
+			</li>
+		</ul>
+ 	</div>
+
+	<form ref="form" v-on:submit.prevent
+		method="post" action="/servlet/RectangleServlet" >
+
+		<div class="form-group row">
+			<label for="length" class="col-sm-2 col-form-label">Length:</label>
+			<div class="col-sm-10">
+				<input v-model="form.length"
+					type="number" class="form-control" id="length" name="length" />
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label for="width" class="col-sm-2 col-form-label">Width:</label>
+			<div class="col-sm-10">
+				<input v-model="form.width"
+					type="number" class="form-control" id="width" name="width" />
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<div class="col-sm-10 offset-sm-2">
+				<button v-on:click="submit()" 
+					type="submit" class="btn btn-primary" >
+					Submit
+				</button>	
+				<button type="button" class="btn btn-secondary" v-on:click="clearMessages">Clear</button>
+			</div>
+		</div>
+	</form>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+
+var app = new Vue({
+	el: '#app',
+
+    data: {
+        infoMessage: '',
+    	errorMessages: [],    	
+        form: {
+        	length: 2,
+        	width: 3,
+        },
+        errorMap: new Map(),
+     },
+
+     // define methods
+     methods: {
+		clearMessages: function() {
+			this.infoMessage = '';
+			this.infoMessages = [];		
+			this.errorMessages = [];	
+			this.errorMap.clear();
+		},
+
+		submit: function() {
+			const apiURL = '/servlet/RectangleServlet';
+
+			const data = new URLSearchParams();
+			for (const pair of new FormData(this.$refs.form)) {
+				data.append(pair[0], pair[1]);
+			}
+
+			this.clearMessages();
+			
+			fetch(apiURL, {
+				method: 'POST',
+				body: data
+			})
+			.then(handleResponse)
+			.then(responseJson => {
+				console.log(responseJson);
+				
+				this.infoMessage = `<p>Area = <strong>${responseJson.area}</strong></p> \
+					<p>Perimeter = <strong>${responseJson.perimeter}</strong></p> \
+					<p>Diagonal = <strong>${responseJson.diagonal}</strong></p>
+					`; 
+			})
+			.catch(error => {
+				if (error.status == 400) {
+					for (let index = 0; index < Object.keys(error).length - 2; index++) {
+						console.log(error[index]);		
+						this.errorMessages.push( Object.values(error[index])[0] );
+					}
+				}
+			});	
+
+		}
+     },
+})
+
+function handleResponse(response) {
+	return response.json()
+		.then(json => {
+			if (response.ok) {
+				return json
+			} else {
+				let error = Object.assign({}, json, {
+					status: response.status,
+					statusText: response.statusText
+				})
+				return Promise.reject(error)
+			}
+	})
+}
+</script>
+
+</body>
+</html>
