@@ -41,8 +41,11 @@ public class CircleServlet extends HttpServlet {
 		} else {
 							
 			response.setContentType("application/json;charset=UTF-8");
+			// Use the JSON Binding (JSON-B) API to serialize a Java object to JSON data format
+			// http://json-b.net/docs/user-guide.html
 			Jsonb jsonb = JsonbBuilder.create();
-			String responseBodyJson = jsonb.toJson(currentCircle);		
+			// Create a JSON representation of currentCircle using the getters of currentCircle  
+			String responseBodyJson = jsonb.toJson(currentCircle);	
 			response.getWriter().println(responseBodyJson);
 		}
 	}
