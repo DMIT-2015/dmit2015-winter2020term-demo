@@ -1,4 +1,4 @@
-<job id="importCsvDataToDatabasePhotoEnforcementZone.xml" 
+<job id="importCsvDataToDatabasePhotoEnforcementZones" 
 	xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
     version="1.0">
     

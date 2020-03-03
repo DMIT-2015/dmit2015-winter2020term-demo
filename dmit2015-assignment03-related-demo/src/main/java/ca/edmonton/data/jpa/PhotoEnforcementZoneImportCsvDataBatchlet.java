@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-@Named
+@Named	// Create an object of this named photoEnforcementZoneImportCsvDataBatchlet
 public class PhotoEnforcementZoneImportCsvDataBatchlet extends AbstractBatchlet {
 
 	@PersistenceContext(unitName = "mssql-jpa-pu")

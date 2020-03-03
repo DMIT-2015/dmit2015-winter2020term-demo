@@ -46,7 +46,8 @@
 					type="submit" class="btn btn-primary" >
 					Submit
 				</button>	
-				<button type="button" class="btn btn-secondary" v-on:click="clearMessages">Clear</button>
+				<button v-on:click="clearMessages()"
+				type="button" class="btn btn-secondary" >Clear</button>
 			</div>
 		</div>
 	</form>
@@ -101,8 +102,8 @@ var app = new Vue({
 				console.log(responseJson);
 				
 				this.infoMessage = `<p>The area of a circle with a radius of \
-					<strong>${responseJson.radius}</strong> \
-					is <strong>${responseJson.area}</strong>. \
+					<strong>${responseJson.radius}</strong> \    
+					is <strong>${responseJson.area}</strong>. \  
 					</p> \
 					<p>The diameter of a circle with a radius of \
 					<strong>${responseJson.radius}</strong> \

@@ -23,6 +23,10 @@ curl -i -X POST 'http://localhost:8080/servlet/CircleServlet' \
 	-d 'radius=5' \
 	-H 'Content-Type:application/x-www-form-urlencoded' 
 	
+curl -i -X POST 'http://localhost:8080/dmit2015-assignment02-related-demo/servlet/CircleServlet' \
+	-d 'radius=5' \
+	-H 'Content-Type:application/x-www-form-urlencoded' 	
+	
  */
 @WebServlet("/servlet/CircleServlet")
 public class CircleServlet extends HttpServlet {

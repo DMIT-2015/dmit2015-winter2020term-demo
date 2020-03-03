@@ -21,22 +21,19 @@
 		</properties>
 	</persistence-unit>
 	
-	<persistence-unit name="mssql-jpa-pu" transaction-type="RESOURCE_LOCAL">
-<!-- 		<jta-data-source>java:app/datasources/mssqlDS</jta-data-source> -->
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+	<persistence-unit name="mssql-jpa-pu" >
+		<jta-data-source>java:app/datasources/mssqlDS</jta-data-source>
+<!-- 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider> -->
 
-		<class>ca.edmonton.data.jpa.PhotoEnforcementZone</class>
-		
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		
+			
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect"/>
 			<!-- database.action or scripts.action value: none, create, drop-and-create, drop -->	
 			<property name="javax.persistence.schema-generation.database.action" value="create"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost;databaseName=DMIT2015DB"/>
-            <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-            <property name="javax.persistence.jdbc.user" value="user2015"/>
-            <property name="javax.persistence.jdbc.password" value="Password2015"/>
+<!--             <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost;databaseName=DMIT2015DB"/> -->
+<!--             <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/> -->
+<!--             <property name="javax.persistence.jdbc.user" value="user2015"/> -->
+<!--             <property name="javax.persistence.jdbc.password" value="Password2015"/> -->
 		</properties>
 	</persistence-unit>
 	
