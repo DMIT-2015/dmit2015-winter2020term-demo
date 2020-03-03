@@ -4,37 +4,25 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
 
-	<persistence-unit name="h2database-jpa-pu" transaction-type="RESOURCE_LOCAL">
-<!-- 		<jta-data-source>java:app/datasources/h2databaseDS</jta-data-source> -->
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+	<persistence-unit name="h2database-jpa-pu" transaction-type="JTA">
+		<jta-data-source>java:app/datasources/h2databaseDS</jta-data-source>
 
-		<class>ca.edmonton.data.jpa.PhotoEnforcementZone</class>
-		
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
 			<!-- database.action or scripts.action value: none, create, drop-and-create, drop -->	
 			<property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:dmit2015db;DB_CLOSE_DELAY=-1"/>
 		</properties>
 	</persistence-unit>
 	
-	<persistence-unit name="mssql-jpa-pu" >
+	<persistence-unit name="mssql-jpa-pu" transaction-type="JTA">
 		<jta-data-source>java:app/datasources/mssqlDS</jta-data-source>
-<!-- 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider> -->
-
-			
+	
 		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect"/>			
 			<!-- database.action or scripts.action value: none, create, drop-and-create, drop -->	
 			<property name="javax.persistence.schema-generation.database.action" value="create"/>
-<!--             <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost;databaseName=DMIT2015DB"/> -->
-<!--             <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/> -->
-<!--             <property name="javax.persistence.jdbc.user" value="user2015"/> -->
-<!--             <property name="javax.persistence.jdbc.password" value="Password2015"/> -->
 		</properties>
+
 	</persistence-unit>
 	
 </persistence>

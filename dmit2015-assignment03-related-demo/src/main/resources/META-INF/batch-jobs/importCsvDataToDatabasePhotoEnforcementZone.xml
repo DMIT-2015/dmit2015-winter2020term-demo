@@ -1,18 +1,21 @@
-<job id="importCsvDataToDatabasePhotoEnforcementZones" 
-	xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
-    version="1.0">
-    
-    <properties>
-    	<property name="input_file" value="/data-edmonton-ca/All_Photo_Enforcement_Zone_Centre_Points.csv" />
-    </properties> 
-    
-    <listeners>
-    	<listener ref="batchJobListener" />
-    </listeners>
-    
-    <step id="step1">
-    	
-    	<batchlet ref="photoEnforcementZoneImportCsvDataBatchlet" />
-    </step>
-    
+<job id="importCsvDataToDatabasePhotoEnforcementZones"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+
+	<properties>
+		<property name="input_file"
+			value="/data-edmonton-ca/All_Photo_Enforcement_Zone_Centre_Points.csv" />
+	</properties>
+
+	<listeners>
+		<listener ref="batchJobListener" />
+	</listeners>
+
+	<step id="step1">
+		<listeners>
+			<listener ref="batchItemStepListener" />
+		</listeners>
+
+		<batchlet ref="photoEnforcementZoneImportCsvDataBatchlet" />
+	</step>
+
 </job>
