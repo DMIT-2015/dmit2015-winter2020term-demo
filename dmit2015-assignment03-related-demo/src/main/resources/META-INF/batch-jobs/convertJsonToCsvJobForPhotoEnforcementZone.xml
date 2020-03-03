@@ -1,0 +1,22 @@
+<job id="convertJsonToCsvJobForPhotoEnforcementZone" 
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+    version="1.0">
+    
+    <properties>
+    	<property name="input_file" value="/data-edmonton-ca/All_Photo_Enforcement_Zone_Centre_Points.json" />
+    	<property name="output_file" value="/home/user2015/Desktop/Converted_All_Photo_Enforcement_Zone_Centre_Points.csv" />
+    </properties> 
+    
+    <step id="step1">
+    	<listeners>
+    		<listener ref="photoEnforcementZoneJsonToCsvBatchItemStepListener" />
+   		</listeners>
+   		
+        <chunk item-count="10">
+            <reader ref="photoEnforcementZoneJsonToCsvBatchItemReader"/>
+            <processor ref="photoEnforcementZoneJsonToCsvBatchItemProcessor"/>
+            <writer ref="photoEnforcementZoneJsonToCsvBatchItemWriter"/>
+        </chunk>
+    </step>
+    
+</job>
