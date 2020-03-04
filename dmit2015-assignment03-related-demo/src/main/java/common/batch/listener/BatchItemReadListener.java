@@ -1,4 +1,4 @@
-package ca.edmonton.data.batch;
+package common.batch.listener;
 
 import javax.batch.api.chunk.listener.AbstractItemReadListener;
 import javax.inject.Named;
@@ -10,7 +10,7 @@ import javax.inject.Named;
  *  
  <step id="step1" >
     	<listeners>
-    		<listener ref="photoEnforcementZoneCsvToJsonBatchItemReadListener" />
+    		<listener ref="batchItemReadListener" />
    		</listeners>
  </step>  		
  *
@@ -18,7 +18,7 @@ import javax.inject.Named;
  *
  */
 @Named
-public class PhotoEnforcementZoneCsvToJsonBatchItemReadListener extends AbstractItemReadListener {
+public class BatchItemReadListener extends AbstractItemReadListener {
 
 	@Override
 	public void afterRead(Object item) throws Exception {
@@ -28,6 +28,11 @@ public class PhotoEnforcementZoneCsvToJsonBatchItemReadListener extends Abstract
 	@Override
 	public void beforeRead() throws Exception {
 		System.out.println("beforeRead");
+	}
+
+	@Override
+	public void onReadError(Exception ex) throws Exception {
+		System.out.println("onReadError: " + ex.getMessage());
 	}
 	
 }

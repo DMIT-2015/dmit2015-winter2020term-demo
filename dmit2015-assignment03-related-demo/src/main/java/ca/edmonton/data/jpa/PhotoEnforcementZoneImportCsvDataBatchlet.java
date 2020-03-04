@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-@Named	// Create an object of this named photoEnforcementZoneImportCsvDataBatchlet
+@Named
 public class PhotoEnforcementZoneImportCsvDataBatchlet extends AbstractBatchlet {
 
 	@PersistenceContext(unitName = "mssql-jpa-pu")
@@ -33,8 +33,8 @@ public class PhotoEnforcementZoneImportCsvDataBatchlet extends AbstractBatchlet 
 				
 				entityManager.persist(data);				
 			}			
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			return "FAILED";
 		}
 				

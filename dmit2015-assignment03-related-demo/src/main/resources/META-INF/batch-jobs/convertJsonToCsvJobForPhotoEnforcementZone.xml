@@ -4,14 +4,20 @@
     
     <properties>
     	<property name="input_file" value="/data-edmonton-ca/All_Photo_Enforcement_Zone_Centre_Points.json" />
-    	<property name="output_file" value="/home/user2015/Desktop/Converted_All_Photo_Enforcement_Zone_Centre_Points.csv" />
+    	<property name="output_file" value="D:/temp/Converted_All_Photo_Enforcement_Zone_Centre_Points.csv" />
     </properties> 
+
+    <listeners>
+    	<listener ref="batchJobListener" />
+    </listeners>
     
     <step id="step1">
-    	<listeners>
+   		<listeners>
     		<listener ref="photoEnforcementZoneJsonToCsvBatchItemStepListener" />
+    		<listener ref="batchChunkListener" />
+    		<listener ref="batchItemReadListener" />
+    		<listener ref="batchItemWriteListener" />
    		</listeners>
-   		
         <chunk item-count="10">
             <reader ref="photoEnforcementZoneJsonToCsvBatchItemReader"/>
             <processor ref="photoEnforcementZoneJsonToCsvBatchItemProcessor"/>

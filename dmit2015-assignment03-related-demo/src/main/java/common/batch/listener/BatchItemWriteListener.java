@@ -1,4 +1,4 @@
-package ca.edmonton.data.batch;
+package common.batch.listener;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import javax.inject.Named;
  *  
  <step id="step1" >
     	<listeners>
-    		<listener ref="photoEnforcementZoneCsvToJsonBatchItemWriteListener" />
+    		<listener ref="batchItemWriteListener" />
     		
    		</listeners>
  </step>  	
@@ -21,8 +21,7 @@ import javax.inject.Named;
  *
  */
 @Named
-public class PhotoEnforcementZoneCsvToJsonBatchItemWriteListener extends AbstractItemWriteListener {
-
+public class BatchItemWriteListener extends AbstractItemWriteListener {
 
 	@Override
 	public void beforeWrite(List<Object> items) throws Exception {
@@ -33,4 +32,10 @@ public class PhotoEnforcementZoneCsvToJsonBatchItemWriteListener extends Abstrac
 	public void afterWrite(List<Object> items) throws Exception {
 		System.out.println("afterWrite: " + items);
 	}
+
+	@Override
+	public void onWriteError(List<Object> items, Exception ex) throws Exception {
+		System.out.println("onWriteError with items: " + items + " and exception " + ex.getMessage());
+	}
+		
 }

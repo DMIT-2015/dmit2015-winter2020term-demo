@@ -1,4 +1,4 @@
-<job id="importCsvDataToDatabasePhotoEnforcementZones"
+<job id="importCsvDataToDatabasePhotoEnforcementZone.xml"
 	xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
 
 	<properties>
@@ -14,7 +14,7 @@
 		<listeners>
 			<listener ref="batchItemStepListener" />
 		</listeners>
-
+		
 		<batchlet ref="photoEnforcementZoneImportCsvDataBatchlet" />
 	</step>
 

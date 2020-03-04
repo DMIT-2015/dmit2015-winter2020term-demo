@@ -33,10 +33,9 @@
 		<version.h2database>1.4.200</version.h2database>
 		<version.mssql-jdbc>8.2.1.jre11</version.mssql-jdbc>
 		<version.ojdbc10>19.3.0.0</version.ojdbc10>
-		<version.postgresql>42.2.9</version.postgresql>
-		<version.mysql-connector-java>8.0.18</version.mysql-connector-java>
-		<version.mariadb-java-client>2.5.3</version.mariadb-java-client>
-		<version.derby>10.15.1.3</version.derby>
+		<version.postgresql>42.2.10</version.postgresql>
+		<version.mysql-connector-java>8.0.19</version.mysql-connector-java>
+		<version.mariadb-java-client>2.5.4</version.mariadb-java-client>
 		
 	</properties>
 
@@ -94,28 +93,21 @@
 <!-- 		    <artifactId>orai18n</artifactId> -->
 <!-- 		    <version>${version.ojdbc10}</version> -->
 <!-- 		</dependency> -->
-
-<!-- 		<dependency> -->
-<!-- 		    <groupId>org.postgresql</groupId> -->
-<!-- 		    <artifactId>postgresql</artifactId> -->
-<!-- 		    <version>${version.postgresql}</version> -->
-<!-- 		</dependency> -->
 <!-- 		<dependency> -->
 <!-- 		    <groupId>mysql</groupId> -->
 <!-- 		    <artifactId>mysql-connector-java</artifactId> -->
 <!-- 		    <version>${version.mysql-connector-java}</version> -->
 <!-- 		</dependency>		 -->
 <!-- 		<dependency> -->
+<!-- 		    <groupId>org.postgresql</groupId> -->
+<!-- 		    <artifactId>postgresql</artifactId> -->
+<!-- 		    <version>${version.postgresql}</version> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
 <!-- 		    <groupId>org.mariadb.jdbc</groupId> -->
 <!-- 		    <artifactId>mariadb-java-client</artifactId> -->
 <!-- 		    <version>${version.mariadb-java-client}</version> -->
 <!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 		    <groupId>org.apache.derby</groupId> -->
-<!-- 		    <artifactId>derby</artifactId> -->
-<!-- 		    <version>${version.derby}</version> -->
-<!-- 		    <scope>test</scope> -->
-<!-- 		</dependency>     -->
     
 		<dependency>
 			<groupId>jakarta.platform</groupId>

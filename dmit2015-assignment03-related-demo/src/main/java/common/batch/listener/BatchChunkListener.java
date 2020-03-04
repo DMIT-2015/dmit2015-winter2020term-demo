@@ -1,4 +1,4 @@
-package ca.edmonton.data.batch;
+package common.batch.listener;
 
 import javax.batch.api.chunk.listener.AbstractChunkListener;
 import javax.inject.Named;
@@ -10,7 +10,7 @@ import javax.inject.Named;
  *  
  <step id="step1" >
     	<listeners>
-    		<listener ref="photoEnforcementZoneCsvToJsonBatchChunkListener" />
+    		<listener ref="batchChunkListener" />
    		</listeners>
  </step>  		
  * 
@@ -18,7 +18,7 @@ import javax.inject.Named;
  *
  */
 @Named
-public class PhotoEnforcementZoneCsvToJsonBatchChunkListener extends AbstractChunkListener {
+public class BatchChunkListener extends AbstractChunkListener {
 
 	@Override
 	public void beforeChunk() throws Exception {
@@ -27,7 +27,8 @@ public class PhotoEnforcementZoneCsvToJsonBatchChunkListener extends AbstractChu
 
 	@Override
 	public void onError(Exception ex) throws Exception {
-		System.out.println("onError: " + ex.getMessage());	}
+		System.out.println("onError: " + ex.getMessage());	
+	}
 
 	@Override
 	public void afterChunk() throws Exception {
