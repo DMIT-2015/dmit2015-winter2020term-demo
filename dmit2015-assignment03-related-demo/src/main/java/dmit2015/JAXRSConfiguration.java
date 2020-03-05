@@ -3,7 +3,7 @@ package dmit2015;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-@ApplicationPath("resources")
+@ApplicationPath("webapi")
 public class JAXRSConfiguration extends Application {
 
 }
