@@ -151,7 +151,7 @@ var app = new Vue({
         form: {
         	name: '',
         	age: 0,
-        	gender: '',
+        	gender: 'ALIEN',
         	osUsed: [],
         	languagesUsed: []
         },
@@ -165,7 +165,7 @@ var app = new Vue({
 			this.errorMessages = [];	
 			this.form.name = '';
 			this.form.age = 0;
-			this.form.gender = '';
+			this.form.gender = 'ALIEN';
 			this.form.osUsed = [];
 			this.form.languagesUsed= [];
 			this.errorMap.clear();
@@ -187,7 +187,7 @@ var app = new Vue({
 			const formData = new FormData();
 			formData.append('name', this.form.name);
 			formData.append('age', this.form.age);
-			formData.append('gender', this.form.gender);
+			formData.append('gender', this.form.gender == '' ? 'ALIEN' : this.form.gender);
 			formData.append('operatingSystemsUsed', this.form.osUsed);
 			formData.append('languagesUsed', this.form.languagesUsed);
 			// To send data as "application/x-www-form-urlencoded" you need to pass a URLSearchParmas object or a URL-encoded string
