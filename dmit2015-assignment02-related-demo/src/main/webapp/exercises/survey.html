@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Rectangle Calculator</title>
+<title>Skill Survey</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
@@ -70,7 +70,8 @@
 			          		class="form-check-input" type="radio" name="gender" id="alien" value="ALIEN" checked="checked">
 			          	<label class="form-check-label" for="alien">Alien</label>
 			        </div>        
-			    </div>	        
+			    </div>
+			    <span>Selected gender: {{ form.gender }}</span>
 			</div>
 		</fieldset>
 		
@@ -97,6 +98,8 @@
 			          	<label class="form-check-label" for="osMacOS">MacOS</label>
 			        </div>        
 			    </div>	        
+			    <span>Checked operating systems: {{ form.osUsed }}</span>
+			    
 			</div>
 		</fieldset>
 
@@ -104,7 +107,8 @@
 			<div class="row">
 		    	<legend class="col-form-label col-sm-2 pt-0">Programming Languages:</legend>
 		    	 <div class="col-sm-10">
-				    <select class="custom-select" multiple size="5">
+				    <select v-model="form.languagesUsed" name="languagesUsed"
+				    	class="custom-select" multiple size="5">
 					  <option value="cs">C#</option>
 					  <option value="java">Java</option>
 					  <option value="koltin">Kotlin</option>
@@ -112,6 +116,7 @@
 					  <option value="php">PHP</option>
 					</select>	       
 				</div> 
+			    <span>Selected programming languages: {{ form.languagesUsed }}</span>
 			</div>
 		</fieldset>
 		
@@ -147,7 +152,7 @@ var app = new Vue({
         	name: '',
         	age: 0,
         	gender: '',
-        	operatingSystemsUsed: [],
+        	osUsed: [],
         	languagesUsed: []
         },
         errorMap: new Map(),
@@ -157,19 +162,37 @@ var app = new Vue({
      methods: {
 		clearMessages: function() {
 			this.infoMessage = '';
-			this.infoMessages = [];		
 			this.errorMessages = [];	
+			this.form.name = '';
+			this.form.age = 0;
+			this.form.gender = '';
+			this.form.osUsed = [];
+			this.form.languagesUsed= [];
 			this.errorMap.clear();
 		},
 
 		submit: function() {
-			const apiURL = '/servlet/RectangleServlet';
+			const apiURL = '/servlet/SurveyServlet';
 
+			// Construct a URLSearchParams object and populate it with form field values
+			/*
 			const data = new URLSearchParams();
 			for (const pair of new FormData(this.$refs.form)) {
 				data.append(pair[0], pair[1]);
 			}
+			*/
 
+			// Instead of addding form field values to the URLSearchParams object you can also add Vue.js manage data as follows:
+			// A FormData object can only used to send data as "multipart/form-data"
+			const formData = new FormData();
+			formData.append('name', this.form.name);
+			formData.append('age', this.form.age);
+			formData.append('gender', this.form.gender);
+			formData.append('operatingSystemsUsed', this.form.osUsed);
+			formData.append('languagesUsed', this.form.languagesUsed);
+			// To send data as "application/x-www-form-urlencoded" you need to pass a URLSearchParmas object or a URL-encoded string
+			const data = new URLSearchParams(formData);
+			
 			this.clearMessages();
 			
 			fetch(apiURL, {
@@ -180,9 +203,11 @@ var app = new Vue({
 			.then(responseJson => {
 				console.log(responseJson);
 				
-				this.infoMessage = `<p>Area = <strong>${responseJson.area}</strong></p> \
-					<p>Perimeter = <strong>${responseJson.perimeter}</strong></p> \
-					<p>Diagonal = <strong>${responseJson.diagonal}</strong></p>
+				this.infoMessage = `<p>Name: <strong>${responseJson.name}</strong></p> \
+					<p>Age: <strong>${responseJson.age}</strong></p> \
+					<p>Gender: <strong>${responseJson.gender}</strong></p>
+					<p>Operating Systems: <strong>${responseJson.operatingSystemsUsed}</strong></p>
+					<p>Programming Languages:: <strong>${responseJson.languagesUsed}</strong></p>
 					`; 
 			})
 			.catch(error => {
