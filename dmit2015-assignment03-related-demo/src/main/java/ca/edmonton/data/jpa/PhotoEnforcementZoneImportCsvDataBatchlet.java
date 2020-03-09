@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 @Named
 public class PhotoEnforcementZoneImportCsvDataBatchlet extends AbstractBatchlet {
 
-	@PersistenceContext(unitName = "mssql-jpa-pu")
+	@PersistenceContext(unitName = "h2database-jpa-pu")
 	private EntityManager entityManager;
 	
 	@Transactional

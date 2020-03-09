@@ -56,8 +56,9 @@ curl -i -X GET 'http://localhost:8080/webapi/pez/reasonCodes?reasonCode=h'
  * @author Sam Wu
  *
  */
-
-@Path("pez")
+				
+@Path("pez")	// "http://server/webapi/pez"
+				// @Path before a class is relative to @ApplicationPath
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class PhotoEnforcementZoneResource {
@@ -65,15 +66,15 @@ public class PhotoEnforcementZoneResource {
 	@PersistenceContext(unitName = "mssql-jpa-pu")
 	private EntityManager entityManager;
 	
-	@POST
+	@POST		// "http://server/webapi/pez
 	@Transactional
 	public Response postJsonPhotoEnforcementZone(PhotoEnforcementZone newPhotoEnforcementZone) {
 		entityManager.persist(newPhotoEnforcementZone);
 		return Response.ok(newPhotoEnforcementZone.getId()).build();
 	}
 
-	@POST
-	@Path("form")
+	@POST			
+	@Path("form")	// "http://server/webapi/pez/form
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Transactional
 	public Response postFormParamPhotoEnforcementZone(
@@ -90,8 +91,8 @@ public class PhotoEnforcementZoneResource {
 		return Response.ok(newPhotoEnforcementZone.getId()).build();
 	}
 
-	@POST
-	@Path("path/{locationDescription}/{speedLimit}/{reasonCodes}")
+	@POST	// "http://server/webapi/pez/path/location1/100/f"
+	@Path("path/{locationDescription}/{speedLimit}/{reasonCodes}")	
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Transactional
 	public Response postPathParamPhotoEnforcementZone(
@@ -108,7 +109,7 @@ public class PhotoEnforcementZoneResource {
 		return Response.ok(newPhotoEnforcementZone.getId()).build();
 	}
 
-	@POST
+	@POST	// "http://server/webapi/pez/query?locationDescription=new%20location&speedLimit=50&reasonCodes=b"
 	@Path("query")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Transactional
@@ -127,7 +128,7 @@ public class PhotoEnforcementZoneResource {
 	}
 
 	@PUT
-	@Path("{id}")
+	@Path("{id}")	// "http://server/webapi/pez/100"
 	@Transactional
 	public Response updatePhotoEnforcementZone(@PathParam("id") Long id, PhotoEnforcementZone editedPhotoEnforcementZone) {
 		PhotoEnforcementZone existingPhotoEnforcementZone = entityManager.find(PhotoEnforcementZone.class, id);
@@ -140,7 +141,7 @@ public class PhotoEnforcementZoneResource {
 	}
 
 	@DELETE
-	@Path("{id}")
+	@Path("{id}")	// "http://server/webapi/pez/100"
 	@Transactional
 	public Response deletePhotoEnforcementZone(@PathParam("id") Long id) {
 		PhotoEnforcementZone existingPhotoEnforcementZone = entityManager.find(PhotoEnforcementZone.class, id);
@@ -148,7 +149,7 @@ public class PhotoEnforcementZoneResource {
 		return Response.ok(existingPhotoEnforcementZone).build();
 	}
 
-	@GET
+	@GET	// "http://server/webapi/pez"
 	public Response findAllZones() {
 		List<PhotoEnforcementZone> zoneList = entityManager.createQuery(
 			"SELECT e "
@@ -162,7 +163,7 @@ public class PhotoEnforcementZoneResource {
 	}
 
 	@GET
-	@Path("{id}")
+	@Path("{id}")	// "http://server/webapi/pez/{id}"
 	public Response findOneZone(@PathParam("id") Long id) {
 		PhotoEnforcementZone singleZone = entityManager.createQuery(
 			"SELECT e "
