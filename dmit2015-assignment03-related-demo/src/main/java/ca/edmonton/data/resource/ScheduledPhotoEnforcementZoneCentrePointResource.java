@@ -46,8 +46,7 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 	@GET
 	public Response findAll() {
 		List<ScheduledPhotoEnforcementZoneCentrePoint> resultList = entityManager.createQuery(
-			"SELECT e "
-			+ " ScheduledPhotoEnforcementZoneCentrePoint e "
+			" FROM ScheduledPhotoEnforcementZoneCentrePoint e "
 			, ScheduledPhotoEnforcementZoneCentrePoint.class)
 			.getResultList();
 		
