@@ -1,4 +1,4 @@
-package ca.edmonton.data.jpa;
+package ca.edmonton.data.resource;
 
 import java.net.URI;
 import java.util.List;
@@ -18,6 +18,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import ca.edmonton.data.jpa.ScheduledPhotoEnforcementZoneCentrePoint;
 
 /**
  * 
