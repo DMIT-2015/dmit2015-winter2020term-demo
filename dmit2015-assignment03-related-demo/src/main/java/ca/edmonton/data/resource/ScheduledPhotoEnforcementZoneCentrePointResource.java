@@ -35,7 +35,7 @@ import ca.edmonton.data.jpa.ScheduledPhotoEnforcementZoneCentrePoint;
  *
  */
 		
-@Path("photo-zone")
+@Path("photopoints")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ScheduledPhotoEnforcementZoneCentrePointResource {
