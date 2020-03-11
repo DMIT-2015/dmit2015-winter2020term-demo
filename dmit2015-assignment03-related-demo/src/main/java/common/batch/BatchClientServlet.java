@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * The servlet is used to start a Batch Process using the XML job filename 
 
+curl -i -X GET 'http://localhost:8080/servlet/BatchClientServlet?filename=importCsvDataToDatabaseForScheduledPhotoEnforcemenZoneCentrePoint'
+
 curl -i -X GET 'http://localhost:8080/servlet/BatchClientServlet?filename=importCsvDataToDatabasePhotoEnforcementZone'
 
 curl -i -X GET 'http://localhost:8080/servlet/BatchClientServlet?filename=convertCsvToJsonJobForPhotoEnforcementZone' 

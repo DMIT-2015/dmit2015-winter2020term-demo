@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -31,6 +32,30 @@ import ca.edmonton.data.jpa.ScheduledPhotoEnforcementZoneCentrePoint;
  * 	/photopoints/2775	PUT				{"speedLimit": 60}					Update the user identified by a siteId of 2775
  * 	/photopoints/7175	DELETE												Remove the ScheduledPhotoEnforcementZoneCentrePoint with a siteId of 7175
  * 
+ * 
+		
+curl -i -X GET 'http://localhost:8080/webapi/photopoints' 
+
+curl -i -X GET 'http://localhost:8080/webapi/photopoints/301' 
+curl -i -X GET 'http://localhost:8080/webapi/photopoints/1' 
+
+curl -i -X POST 'http://localhost:8080/webapi/photopoints' \
+	-d '{"siteId":1234,"locationDescription":"NAIT HP Centre","speedLimit":50,"reasonCodes":"e","latitude":53.56811903909844,"longitude":-113.5014541645244}' \
+	-H 'Content-Type:application/json'
+
+curl -i -X POST 'http://localhost:8080/webapi/photopoints' \
+	-d '{"siteId":1234,"locationDescription":"NAIT HP Centre","reasonCodes":"e","latitude":53.56811903909844,"longitude":-113.5014541645244}' \
+	-H 'Content-Type:application/json'
+
+
+curl -i -X PUT 'http://localhost:8080/webapi/photopoints/1234' \
+	-d '{"locationDescription":"Updated NAIT HP Centre","speedLimit":30,"reasonCodes":"e,f","latitude":53.56811903909844,"longitude":-113.5014541645244}' \
+	-H 'Content-Type:application/json'
+	
+curl -i -X DELETE 'http://localhost:8080/webapi/photopoints/123' 
+
+ * 
+ * 
  * @author Sam Wu
  *
  */
@@ -46,7 +71,7 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 	@GET
 	public Response findAll() {
 		List<ScheduledPhotoEnforcementZoneCentrePoint> resultList = entityManager.createQuery(
-			" FROM ScheduledPhotoEnforcementZoneCentrePoint e "
+			"FROM ScheduledPhotoEnforcementZoneCentrePoint e "
 			, ScheduledPhotoEnforcementZoneCentrePoint.class)
 			.getResultList();
 		
@@ -65,19 +90,21 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 	}
 	
 	@POST
+	@Transactional
 	public Response add(@Valid ScheduledPhotoEnforcementZoneCentrePoint newScheduledPhotoEnforcementZoneCentrePoint, @Context UriInfo uriInfo) {
 		
 		entityManager.persist(newScheduledPhotoEnforcementZoneCentrePoint);
 		
 		//userInfo is injected via @Context parameter to this method
 		URI location = uriInfo.getAbsolutePathBuilder()
-				.path(newScheduledPhotoEnforcementZoneCentrePoint.getSiteId().toString())
-				.build();
+			.path(newScheduledPhotoEnforcementZoneCentrePoint.getSiteId().toString())
+			.build();
 		
 		return Response.created(location).build();
 	}
 	
 	@PUT @Path("{id}")
+	@Transactional
 	public Response update(@PathParam("id") Short siteId, @Valid ScheduledPhotoEnforcementZoneCentrePoint exisitingScheduledPhotoEnforcementZoneCentrePoint) {
 		ScheduledPhotoEnforcementZoneCentrePoint foundEntity = entityManager.find(ScheduledPhotoEnforcementZoneCentrePoint.class, siteId);
 		
@@ -96,6 +123,7 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 	}
 
 	@DELETE @Path("{id}")
+	@Transactional
 	public Response delete(@PathParam("id") Short siteId) {
 		ScheduledPhotoEnforcementZoneCentrePoint foundEntity = entityManager.find(ScheduledPhotoEnforcementZoneCentrePoint.class, siteId);
 		

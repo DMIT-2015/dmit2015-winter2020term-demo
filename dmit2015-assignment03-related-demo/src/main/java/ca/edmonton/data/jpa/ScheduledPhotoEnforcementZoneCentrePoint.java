@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -39,6 +40,7 @@ import lombok.Setter;
  *
  */
 @Entity
+@Table(name = "edmonton_scheduled_photo_enforcement_zone_centre_point")
 @Getter @Setter
 public class ScheduledPhotoEnforcementZoneCentrePoint implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -46,7 +48,9 @@ public class ScheduledPhotoEnforcementZoneCentrePoint implements Serializable {
 	/**
 	 * A system generated number assigned to any newly created enforcement zone
 	 */
+	@NotNull(message = "SiteID is required")
 	@Id
+	@Column(name = "site_id", nullable = false, unique = true)
 	private Short siteId;
 		
 	/**
@@ -74,18 +78,21 @@ public class ScheduledPhotoEnforcementZoneCentrePoint implements Serializable {
 	 * g) Construction zones; or 
 	 * h) Areas where the public or a community has expressed concerns related to speeding.
 	 */
+	@NotBlank(message = "Reason Code(s) is required")
 	@Column(name = "reason_code_s_", length = 32)
 	private String reasonCodes;
 	
 	/**
 	 * The latitude value for the centre of the enforcement zone
 	 */
+	@NotNull(message = "Latitude is required")
 	private Double latitude;
 	
 	
 	/**
 	 * The longitude value for the centre of the enforcement zone
 	 */
+	@NotNull(message = "Longitude is required")
 	private Double longitude;
 	
 	@Version
