@@ -3,6 +3,7 @@ package ca.edmonton.data.resource;
 import java.net.URI;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -59,10 +60,11 @@ curl -i -X DELETE 'http://localhost:8080/webapi/photopoints/123'
  * @author Sam Wu
  *
  */
-		
-@Path("photopoints")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+
+@ApplicationScoped		// This is a CDI-managed bean that is created only once during the life cycle of the application
+@Path("photopoints")	// All methods of this class are associated this URL path
+@Consumes(MediaType.APPLICATION_JSON)	// All method this class accept data in JSON format
+@Produces(MediaType.APPLICATION_JSON)	// All methods of this class returns data in JSON format
 public class ScheduledPhotoEnforcementZoneCentrePointResource {
 
 	@PersistenceContext(unitName = "mssql-jpa-pu")
