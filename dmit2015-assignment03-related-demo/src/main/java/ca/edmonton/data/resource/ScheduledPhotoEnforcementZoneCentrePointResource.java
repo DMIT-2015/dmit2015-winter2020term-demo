@@ -50,7 +50,7 @@ curl -i -X POST 'http://localhost:8080/webapi/photopoints' \
 
 
 curl -i -X PUT 'http://localhost:8080/webapi/photopoints/1234' \
-	-d '{"locationDescription":"Updated NAIT HP Centre","speedLimit":30,"reasonCodes":"e,f","latitude":53.56811903909844,"longitude":-113.5014541645244}' \
+	-d '{"siteId":1234,"locationDescription":"Updated NAIT HP Centre","speedLimit":30,"reasonCodes":"e,f","latitude":53.56811903909844,"longitude":-113.5014541645244}' \
 	-H 'Content-Type:application/json'
 	
 curl -i -X DELETE 'http://localhost:8080/webapi/photopoints/123' 
@@ -98,7 +98,7 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 	public Response add(@Valid ScheduledPhotoEnforcementZoneCentrePoint newScheduledPhotoEnforcementZoneCentrePoint, @Context UriInfo uriInfo) {
 		
 		// Check if the primary key is already used.  This is only required when primary is assigned instead of generated. 
-		if (find(newScheduledPhotoEnforcementZoneCentrePoint.getSiteId()) != null) {
+		if (entityManager.find(ScheduledPhotoEnforcementZoneCentrePoint.class, newScheduledPhotoEnforcementZoneCentrePoint.getSiteId()) != null) {
 			return Response
 					.status(Response.Status.CONFLICT)
 					.entity("Unable to create ScheduledPhotoEnforcementZoneCentrePoint, siteId is already used.")
