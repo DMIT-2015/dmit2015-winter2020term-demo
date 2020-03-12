@@ -1,4 +1,4 @@
-package ca.edmonton.data.jpa;
+package ca.edmonton.data.batch;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,6 +8,8 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+
+import ca.edmonton.data.entity.ScheduledPhotoEnforcementZoneCentrePoint;
 
 @Named
 public class ScheduledPhotoEnforcementZoneCentrePointImportCsvDataBatchlet extends AbstractBatchlet {

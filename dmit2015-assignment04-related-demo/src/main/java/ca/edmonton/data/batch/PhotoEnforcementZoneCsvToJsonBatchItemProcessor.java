@@ -7,7 +7,7 @@ import javax.inject.Named;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 
-import ca.edmonton.data.jpa.PhotoEnforcementZone;
+import ca.edmonton.data.entity.PhotoEnforcementZone;
 
 @Named
 public class PhotoEnforcementZoneCsvToJsonBatchItemProcessor implements ItemProcessor {

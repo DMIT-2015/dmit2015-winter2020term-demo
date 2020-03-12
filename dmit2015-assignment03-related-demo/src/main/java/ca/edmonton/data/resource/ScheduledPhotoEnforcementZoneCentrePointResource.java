@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import ca.edmonton.data.jpa.ScheduledPhotoEnforcementZoneCentrePoint;
+import ca.edmonton.data.entity.ScheduledPhotoEnforcementZoneCentrePoint;
 
 /**
  * 
@@ -63,14 +63,14 @@ curl -i -X DELETE 'http://localhost:8080/webapi/photopoints/123'
 
 @ApplicationScoped		// This is a CDI-managed bean that is created only once during the life cycle of the application
 @Path("photopoints")	// All methods of this class are associated this URL path
-@Consumes(MediaType.APPLICATION_JSON)	// All method this class accept data in JSON format
-@Produces(MediaType.APPLICATION_JSON)	// All methods of this class returns data in JSON format
+@Consumes(MediaType.APPLICATION_JSON)	// All methods this class accept only JSON format data 
+@Produces(MediaType.APPLICATION_JSON)	// All methods returns data that has been converted to JSON format
 public class ScheduledPhotoEnforcementZoneCentrePointResource {
 
-	@PersistenceContext(unitName = "mssql-jpa-pu")
+	@PersistenceContext(unitName = "mssql-jpa-pu")	// The unitName is defined in persistence.xml
 	private EntityManager entityManager;
 	
-	@GET
+	@GET	// This method only accepts HTTP GET requests.
 	public Response findAll() {
 		List<ScheduledPhotoEnforcementZoneCentrePoint> resultList = entityManager.createQuery(
 			"FROM ScheduledPhotoEnforcementZoneCentrePoint e "
@@ -80,8 +80,10 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 		return Response.ok(resultList).build();
 	}
 	
-	@GET @Path("{id}")
+	@GET 			// This method only accepts HTTP GET requests.
+	@Path("{id}")	// This method accepts a path parameter and gives it a name of id
 	public Response find(@PathParam("id") Short siteId) {
+		// Find the ScheduledPhotoEnforcementZoneCentrePoint instance with primary key of siteId 
 		ScheduledPhotoEnforcementZoneCentrePoint foundEntity = entityManager.find(ScheduledPhotoEnforcementZoneCentrePoint.class, siteId);
 		
 		if (foundEntity == null) {
@@ -91,21 +93,43 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 		return Response.ok(foundEntity).build();
 	}
 	
-	@POST
-	@Transactional
+	@POST			// This method only accepts HTTP POST requests.
+	@Transactional	// This method requires a transaction to execute
 	public Response add(@Valid ScheduledPhotoEnforcementZoneCentrePoint newScheduledPhotoEnforcementZoneCentrePoint, @Context UriInfo uriInfo) {
 		
-		entityManager.persist(newScheduledPhotoEnforcementZoneCentrePoint);
+		// Check if the primary key is already used.  This is only required when primary is assigned instead of generated. 
+		if (find(newScheduledPhotoEnforcementZoneCentrePoint.getSiteId()) != null) {
+			return Response
+					.status(Response.Status.CONFLICT)
+					.entity("Unable to create ScheduledPhotoEnforcementZoneCentrePoint, siteId is already used.")
+					.build();
+		}
+		
+		try {
+			// Persist the new ScheduledPhotoEnforcementZoneCentrePoint into the database
+			entityManager.persist(newScheduledPhotoEnforcementZoneCentrePoint);
+		} catch (Exception ex) {
+			// Return a HTTP status of "500 Internal Server Error" containing the exception message
+			return Response.
+					serverError()
+					.entity(ex.getMessage())
+					.build();
+		}
 		
 		//userInfo is injected via @Context parameter to this method
 		URI location = uriInfo.getAbsolutePathBuilder()
 			.path(newScheduledPhotoEnforcementZoneCentrePoint.getSiteId().toString())
 			.build();
 		
-		return Response.created(location).build();
+		// Set the location path of the new ScheduledPhotoEnforcementZoneCentrePoint with its identifier
+		// Returns an HTTP status of "201 Created" if the ScheduledPhotoEnforcementZoneCentrePoint was successfully persisted
+		return Response
+				.created(location)
+				.build();
 	}
 	
-	@PUT @Path("{id}")
+	@PUT 			// This method only accepts HTTP PUT requests.
+	@Path("{id}")	// This method accepts a path parameter and gives it a name of id
 	@Transactional
 	public Response update(@PathParam("id") Short siteId, @Valid ScheduledPhotoEnforcementZoneCentrePoint exisitingScheduledPhotoEnforcementZoneCentrePoint) {
 		ScheduledPhotoEnforcementZoneCentrePoint foundEntity = entityManager.find(ScheduledPhotoEnforcementZoneCentrePoint.class, siteId);
@@ -119,12 +143,23 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 		foundEntity.setReasonCodes(exisitingScheduledPhotoEnforcementZoneCentrePoint.getReasonCodes());
 		foundEntity.setLatitude(exisitingScheduledPhotoEnforcementZoneCentrePoint.getLatitude());
 		foundEntity.setLongitude(exisitingScheduledPhotoEnforcementZoneCentrePoint.getLongitude());
-		entityManager.merge(foundEntity);
 		
-		return Response.ok().build();
+		try {
+			entityManager.merge(foundEntity);
+		} catch (Exception ex) {
+			// Return a HTTP status of "500 Internal Server Error" containing the exception message
+			return Response.
+					serverError()
+					.entity(ex.getMessage())
+					.build();
+		}
+
+		// Returns an HTTP status "204 No Content" if the ScheduledPhotoEnforcementZoneCentrePoint was successfully persisted		
+		return Response.noContent().build();
 	}
 
-	@DELETE @Path("{id}")
+	@DELETE 		// This method only accepts HTTP DELETE requests.
+	@Path("{id}")	// This method accepts a path parameter and gives it a name of id
 	@Transactional
 	public Response delete(@PathParam("id") Short siteId) {
 		ScheduledPhotoEnforcementZoneCentrePoint foundEntity = entityManager.find(ScheduledPhotoEnforcementZoneCentrePoint.class, siteId);
@@ -132,9 +167,19 @@ public class ScheduledPhotoEnforcementZoneCentrePointResource {
 		if (foundEntity == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		entityManager.remove(foundEntity);
 		
-		return Response.ok().build();
+		try {
+			entityManager.remove(foundEntity);	// Removes the ScheduledPhotoEnforcementZoneCentrePoint from being persisted
+		} catch (Exception ex) {				
+			// Return a HTTP status of "500 Internal Server Error" containing the exception message
+			return Response						
+					.serverError()
+					.encoding(ex.getMessage())
+					.build();
+		}
+		
+		// Returns an HTTP status "204 No Content" if the ScheduledPhotoEnforcementZoneCentrePoint was successfully deleted
+		return Response.noContent().build();	
 	}
 
 }

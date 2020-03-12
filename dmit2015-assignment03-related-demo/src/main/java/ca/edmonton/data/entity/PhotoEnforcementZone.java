@@ -1,4 +1,4 @@
-package ca.edmonton.data.jpa;
+package ca.edmonton.data.entity;
 
 import java.io.Serializable;
 

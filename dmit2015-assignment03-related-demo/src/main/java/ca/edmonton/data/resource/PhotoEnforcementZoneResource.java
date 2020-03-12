@@ -16,9 +16,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.MediaType;
 
-import ca.edmonton.data.jpa.PhotoEnforcementZone;
+import ca.edmonton.data.entity.PhotoEnforcementZone;
+
+import javax.ws.rs.core.MediaType;
 
 /**
  * 
