@@ -64,6 +64,10 @@ curl -i -X DELETE 'http://localhost:8080/webapi/northwind/shippers/4'
 
 curl -i -X GET 'http://localhost:8080/webapi/northwind/categories' 
 
+curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/categoryNames'
+ 
+curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/categoryID_categoryName'
+
 		
 curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/1'
  
@@ -187,9 +191,13 @@ public class NorthwindResource {
 	}
 
 	
+	/**
+	 * Return a list of Category entities sorted by the categoryName
+	 * @return a list of Category entities 
+	 */
 
 	@Path("categories")
-	@GET	// This method only accepts HTTP GET requests.
+	@GET					// This method only accepts HTTP GET requests.
 	public Response listCategories() {
 		List<Category> resultList = entityManager.createQuery(
 			"FROM Category e ORDER BY e.categoryName "
@@ -198,6 +206,50 @@ public class NorthwindResource {
 		
 		return Response.ok(resultList).build();
 	}
+	
+
+	/**
+	 * Return a list of categoryName sorted ascending
+	 * @return a list of category names 
+	 */
+
+	@Path("categories/categoryNames")
+	@GET					// This method only accepts HTTP GET requests.
+	public Response listCategoryNames() {
+		List<String> resultList = entityManager.createQuery(
+			"SELECT c.categoryName FROM Category c GROUP BY c.categoryName ORDER BY c.categoryName "
+			, String.class)
+			.getResultList();
+		
+		return Response.ok(resultList).build();
+	}
+	
+	/**
+	 * Return a list of categoryId, categoryName sorted ascending by the categoryName
+	 * @return a list of categoryId,categoryName values 
+	 */
+
+	@Path("categories/categoryID_categoryName")
+	@GET					// This method only accepts HTTP GET requests.
+	public Response listCategoryIDAndCategoryName() {
+		List<Tuple> resultList = entityManager.createQuery(
+			"SELECT c.categoryID as CatID, c.categoryName as CatName FROM Category c ORDER BY c.categoryName "
+			, Tuple.class)
+			.getResultList();
+		
+		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+		resultList.forEach(tuple -> {
+			JsonObject jsonObject = Json.createObjectBuilder()
+				.add("categoryID", tuple.get("CatID", Integer.class))
+				.add("categoryName", tuple.get("CatName", String.class))
+				.build();
+			jsonArrayBuilder.add(jsonObject);		
+		});
+		
+		return Response.ok(jsonArrayBuilder.build()).build();
+	}
+	
+	
 	
 	@Path("categories/totals")
 	@GET	// This method only accepts HTTP GET requests.
