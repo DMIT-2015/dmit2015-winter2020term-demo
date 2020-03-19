@@ -36,18 +36,19 @@ import northwind.entity.Shipper;
  * 	
  * 	URI								Http Method		Request Body											Description
  * 	------------------------------	-----------		------------------------------------------------------	-----------------------------------------	
-*	/northwind/shippers				POST			{"companyName":"Canada Post","phone":"(416) 123-1234"}	Create a new Shipper
+ *	/northwind/shippers				POST			{"companyName":"Canada Post","phone":"(416) 123-1234"}	Create a new Shipper
  * 	/northwind/shippers				GET																		Find all Shipper
  * 	/northwind/shippers/4			GET																		Find one Shipper with a shipperID of 4
  * 	/northwind/shippers/4			PUT				{"companyName":"DMIT Post","phone":"(789) 378-6140"}	Update the Shipper identified by a shipperID of 4
-  *	/northwind/categories			GET																		Get all categories
+ * 	/northwind/shippers/4			DELETE																	Delete one Shipper with a shipperID of 4
+ *	/northwind/categories			GET																		Get all categories
  *	/northwind/categories/{id}		GET																		Get one category by id
  * 
  * 
 
 curl -i -X GET 'http://localhost:8080/webapi/northwind/shippers' 
 
-curl -i -X POST 'http://localhost:8080/webapi/northwnd/shippers' \
+curl -i -X POST 'http://localhost:8080/webapi/northwind/shippers' \
 	-d '{"companyName":"Canada Post","phone":"(416) 123-1234"}' \
 	-H 'Content-Type:application/json'
 
@@ -55,8 +56,11 @@ curl -i -X PUT 'http://localhost:8080/webapi/northwind/shippers/4' \
 	-d '{"companyName":"DMIT Post","phone":"(789) 378-6140"}' \
 	-H 'Content-Type:application/json'
 	
-curl -i -X DELETE 'http://localhost:8080/webapi/northwind/4' 
+curl -i -X GET 'http://localhost:8080/webapi/northwind/shippers/4' 
 
+curl -i -X DELETE 'http://localhost:8080/webapi/northwind/shippers/4' 
+
+curl -i -X DELETE 'http://localhost:8080/webapi/northwind/shippers/4' 
 
 curl -i -X GET 'http://localhost:8080/webapi/northwind/categories' 
 
@@ -104,12 +108,12 @@ public class NorthwindResource {
 	}
 		
 	@POST			// This method only accepts HTTP POST requests.
-	@Path("Shippers")
+	@Path("shippers")
 	@Transactional	// This method requires a transaction to execute
 	public Response addShipper(@Valid Shipper newShipper, @Context UriInfo uriInfo) {
 		
 		try {
-			// Persist the new ScheduledPhotoEnforcementZoneCentrePoint into the database
+			// Persist the new Shippper into the database
 			entityManager.persist(newShipper);
 		} catch (Exception ex) {
 			// Return a HTTP status of "500 Internal Server Error" containing the exception message
