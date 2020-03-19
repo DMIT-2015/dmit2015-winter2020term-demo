@@ -68,10 +68,13 @@ curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/categoryNames'
  
 curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/categoryID_categoryName'
 
+curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/totals'
+
+curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/Seafood/totals/1997'
+
 		
 curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/1'
  
-curl -i -X GET 'http://localhost:8080/webapi/northwind/categories/totals'
 
  * 
  * 
@@ -232,11 +235,13 @@ public class NorthwindResource {
 	@Path("categories/categoryID_categoryName")
 	@GET					// This method only accepts HTTP GET requests.
 	public Response listCategoryIDAndCategoryName() {
+		// A Tuple is an interface for extracting the elements of a query result tuple
+		// An alias for each value is REQUIRED in the SELECT clause when returning a Tuple
 		List<Tuple> resultList = entityManager.createQuery(
 			"SELECT c.categoryID as CatID, c.categoryName as CatName FROM Category c ORDER BY c.categoryName "
 			, Tuple.class)
 			.getResultList();
-		
+		// Extract the elements (CatID, CatName) from the Tuple using the alias name and store it in another data structure
 		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 		resultList.forEach(tuple -> {
 			JsonObject jsonObject = Json.createObjectBuilder()
@@ -255,7 +260,7 @@ public class NorthwindResource {
 	@GET	// This method only accepts HTTP GET requests.
 	public Response listCategorySalesTotals() {
 		List<Tuple> resultList = entityManager.createQuery(
-			"SELECT c.categoryName as CategoryName, SUM(od.unitPrice * od.quantity) as SalesTotal "
+			"SELECT c.categoryName as CatName, SUM(od.unitPrice * od.quantity * (1 - od.discount)) as SalesTotal "
 			+ " FROM Order o, IN (o.orderDetails) od, IN (od.product) p, IN (p.category) c  "
 			+ " GROUP BY c.categoryName "
 			, Tuple.class)
@@ -264,13 +269,47 @@ public class NorthwindResource {
 		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 		resultList.forEach(tuple -> {
 			JsonObject jsonObject = Json.createObjectBuilder()
-				.add("categoryName", tuple.get("CategoryName", String.class))
-				.add("salesTotal", tuple.get("SalesTotal", BigDecimal.class))
+				.add("categoryName", tuple.get("CatName", String.class))
+				.add("salesTotal", tuple.get("SalesTotal", Double.class))
 				.build();
 			jsonArrayBuilder.add(jsonObject);		
 		});
 		
 		return Response.ok(jsonArrayBuilder.build()).build();
+	}
+	
+	@Path("categories/{categoryName}/totals/{year}")
+	@GET	// This method only accepts HTTP GET requests.
+	public Response findCategorySalesTotalsForCategoryNameAndYear(
+		@PathParam("categoryName") String categoryName, 
+		@PathParam("year") int year) {
+		
+		try {
+			Tuple singleResult = entityManager.createQuery(
+				"SELECT c.categoryName as CatName, SUM(od.unitPrice * od.quantity * (1 - od.discount)) as SalesTotal "
+				+ " FROM Order o, IN (o.orderDetails) od, IN (od.product) p, IN (p.category) c  "
+				+ " WHERE c.categoryName = :catNameValue AND YEAR(o.shippedDate) = :yearValue "
+				+ " GROUP BY c.categoryName "
+				, Tuple.class)
+				.setParameter("catNameValue", categoryName)
+				.setParameter("yearValue", year)
+				.getSingleResult();
+			
+			JsonObject jsonObject = Json.createObjectBuilder()
+				.add("categoryName", singleResult.get("CatName", String.class))
+				.add("salesTotal", singleResult.get("SalesTotal", Double.class))
+				.build();
+		
+			return Response.ok(jsonObject).build();
+		} catch (NoResultException ex) {
+			return Response.noContent().build();
+		} catch(Exception ex) {
+			// Return a HTTP status of "500 Internal Server Error" containing the exception message
+			return Response						
+					.serverError()
+					.encoding(ex.getMessage())
+					.build();						
+		}
 	}
 	
 	
