@@ -180,7 +180,7 @@ public class NorthwindResource {
 		}
 		
 		try {
-			entityManager.remove(foundEntity);	// Removes the ScheduledPhotoEnforcementZoneCentrePoint from being persisted
+			entityManager.remove(foundEntity);	// Removes the Shipper from being persisted
 		} catch (Exception ex) {				
 			// Return a HTTP status of "500 Internal Server Error" containing the exception message
 			return Response						
@@ -189,7 +189,7 @@ public class NorthwindResource {
 					.build();
 		}
 		
-		// Returns an HTTP status "204 No Content" if the ScheduledPhotoEnforcementZoneCentrePoint was successfully deleted
+		// Returns an HTTP status "204 No Content" if the Shipper was successfully deleted
 		return Response.noContent().build();	
 	}
 
