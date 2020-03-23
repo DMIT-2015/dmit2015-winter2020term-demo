@@ -5,6 +5,25 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
 
 	<!-- database.action or scripts.action value: none, create, drop-and-create, drop -->	
+	<persistence-unit name="mssqlNorthwind-jpa-pu" transaction-type="JTA">
+		<jta-data-source>java:app/datasources/mssqlNorthwindDS</jta-data-source>
+		<class>northwind.entity.Category</class>
+		<class>northwind.entity.Customer</class>
+		<class>northwind.entity.Employee</class>
+		<class>northwind.entity.OrderDetail</class>
+		<class>northwind.entity.OrderDetailPK</class>
+		<class>northwind.entity.Order</class>
+		<class>northwind.entity.Product</class>
+		<class>northwind.entity.Region</class>
+		<class>northwind.entity.Shipper</class>
+		<class>northwind.entity.Supplier</class>
+		<class>northwind.entity.Territory</class>	
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect"/>			
+			<property name="javax.persistence.schema-generation.database.action" value="none"/>
+		</properties>
+	</persistence-unit>
+
 	<persistence-unit name="h2database-jpa-pu" transaction-type="JTA">
 		<jta-data-source>java:app/datasources/h2databaseDS</jta-data-source>
 		<properties>
@@ -20,6 +39,7 @@
 			<property name="javax.persistence.schema-generation.database.action" value="create"/>
 		</properties>
 	</persistence-unit>
+
 
 <!-- 	<persistence-unit name="oracle-jpa-pu" transaction-type="JTA"> -->
 <!-- 		<jta-data-source>java:app/datasources/oracleDS</jta-data-source> -->
