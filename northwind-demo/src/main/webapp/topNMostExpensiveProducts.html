@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html >
     <head>
-        <title>[The Page Title]</title>
+        <title>Top N Most Expensive Products</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
      
@@ -16,10 +16,22 @@
     
 <div id="app" class="container">
         
-    <h1>[Page Title]</h1>
+    <h1>Top N Most Expensive Products</h1>
     
     <div v-if="message" v-html="message" id="message" class="alert alert-success" role="alert" >
 	</div>
+	
+	<input v-model="maxResults"
+		type="number" 
+		id="maxResults" 
+		name="maxResults"
+		class="form-control">
+		
+	<button v-on:click="fetchData()"
+		type="button" 
+		class="btn btn-primary">
+		Submit
+	</button>
 
 	<table  id="dataTable" class="table table-sm table-striped table-hover" >
     <thead>
@@ -66,13 +78,14 @@ var app = new Vue({
         message:	'',
         //messages:	[],
         resultList: [],
+        maxResults: 10,
        
     },
 
      // Vue LifeCyle Hooks methods that you can define: created, mounted, updated, destroyed
      mounted: function() {
     	// code to execute when Vue is mounted such as fetching data when page loads
-     	this.fetchData();
+     	//this.fetchData();
      },
      
      // A list of methods separated by comma to use with Vue.
@@ -81,7 +94,9 @@ var app = new Vue({
      methods: {
 
     	fetchData: function() {
-    		const apiURL = '/webapi/products/mostexpensive/customselect/10';
+        	const encodedMaxResults = encodeURI(this.maxResults);
+        	
+    		const apiURL = '/webapi/products/mostexpensive/customselect/' + encodedMaxResults;
 
     		fetch(apiURL, {	method: 'GET'} )
 			.then(handleResponse)		// for handling a BadRequest response

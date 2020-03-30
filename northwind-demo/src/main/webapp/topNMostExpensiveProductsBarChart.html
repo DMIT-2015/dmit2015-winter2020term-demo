@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <title>Top N Most Expensive Products</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     
+     	<!-- Bootstrap (https://getbootstrap.com/) CSS -->
+		<link rel="stylesheet" 
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+			integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
+			crossorigin="anonymous">
+			
+		<style>		
+.canvas-container {
+	position: relative;
+	width: 90%;
+}
+		</style>	
+		
+	</head>
+    
+    <body>
+    
+<div id="app" class="container">
+        
+    <h1>Top N Most Expensive Products</h1>
+    
+    <div v-if="message" v-html="message" id="message" class="alert alert-success" role="alert" >
+	</div>
+
+    <input v-model="maxResults"
+		type="number" 
+		id="maxResults" 
+		name="maxResults"
+		class="form-control">
+		
+	<button v-on:click="fetchChartData()"
+		type="button" 
+		class="btn btn-primary">
+		Submit
+	</button>
+
+	<div class="canvas-container" >
+		<canvas id="chartId" width="400" height="400"></canvas>		
+	</div>	
+   	
+		   
+</div>
+
+
+<!-- Bootstrap Dependencies -->	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<!-- Chart.js (https://www.chartjs.org/) Dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+
+<!-- Vue.js Dependencies -->
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- production version, optimized for size and speed -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+
+<script type="text/javascript">
+
+var app = new Vue({
+	// The element for Vue to control
+	el: '#app',					
+	
+	// A list of variables separated by a comma to use with Vue
+	// A variable consists of a name followed by a colon and an initial javascript value (string, array, number, true/false)
+    data: {
+        message:	'',
+        //messages:	[],
+        resultList: [],
+        maxResults: 10,
+       
+    },
+
+     // Vue LifeCyle Hooks methods that you can define: created, mounted, updated, destroyed
+     mounted: function() {
+    	// code to execute when Vue is mounted such as fetching data when page loads
+     	
+     },
+     
+     // A list of methods separated by comma to use with Vue.
+     // The syntax to define a method is:	
+   	 //		methodName: function(param1, param2) {},
+     methods: {
+    	 
+    	 fetchChartData: function() {
+            const encodedMaxResults = encodeURI(this.maxResults);
+        	
+    		const apiURL = '/webapi/products/mostexpensive/customselect/' + encodedMaxResults;
+
+ 							
+ 			fetch(apiURL, {method: 'GET'})
+ 			.then(handleResponse)
+ 			.then(responseJson => {
+ 
+ 				const labels = responseJson.map(item => item.productName);
+ 				const values = responseJson.map(item => item.unitPrice);
+
+ 				//drawPieChart('pie', 'chartId', labels, values);
+ 				drawBarChart('bar','chartId', labels, values);
+ 				//drawLineChart('chartId', labels, values);
+ 				
+ 			})
+ 			.catch(error => {
+ 				this.message = error;
+ 			});			
+
+ 				
+         },
+     	
+     },
+})
+
+
+// common function to handle a BadRequest response from a Fetch API request
+function handleResponse(response) {
+	return response.json()
+		.then(json => {
+			if (response.ok) {
+				return json
+			} else {
+				let error = Object.assign({}, json, {
+					status: response.status,
+					statusText: response.statusText
+				})
+				return Promise.reject(error)
+			}
+	})
+}
+
+
+let currentChart = null; 
+
+function drawPieChart(canvasId, chartType, chartLabels, chartValues) {
+	const canvas = document.getElementById(canvasId);
+	const context = canvas.getContext("2d");
+	
+	const chartData = {
+		labels: chartLabels,
+		datasets : [{
+			data: chartValues,
+			borderColor: 'rgba(255, 255, 255, 1)',
+		}]
+	};
+
+	const chartOptions = {
+		maintainAspectRatio: false,
+		legend: {		
+			position: 'right'
+		},
+		title: {
+			display: true,
+			text: 'Chart Title',
+			fontSize: 22,
+		},
+	}
+
+	currentChart = new Chart(context, {
+		type: chartType, 
+		data: chartData,
+		options: chartOptions
+	});
+
+}
+
+function drawBarChart(chartType, canvasId, chartLabels, chartValues) {
+	const canvas = document.getElementById(canvasId);
+	const context = canvas.getContext("2d");
+	
+	const chartData = {
+		labels: chartLabels,
+		datasets : [{
+			data: chartValues,
+			borderColor: 'rgba(255, 99, 132, 1)',
+		}]
+	};
+
+	const chartOptions = {
+		maintainAspectRatio: false,
+		legend: {
+			display: false
+		},
+		title: {
+			display: true,
+			text: 'Title for Chart',
+			fontSize: 20,
+		},
+		scales: {
+			xAxes: [{
+				scaleLabel: {
+					display: true,
+					fontSize: 16,
+					labelString: 'Label for X Axes'
+				}
+			}],
+			yAxes: [{
+				scaleLabel: {
+					display: true,
+					fontSize: 16,
+					labelString: 'Lable for Y Axes'
+				}
+			}]
+		},		
+		plugins: {
+			labels: {
+				// render 'label', 'value', 'percentage', 'image' or custom function, default is 'percentage'
+				render: 'value',
+			}
+		}
+	}
+	
+	currentChart = new Chart(context, {
+		type: chartType, 
+		data: chartData,
+		options: chartOptions
+	});
+}
+
+
+function drawLineChart(canvasId, chartLabels, chartValues) {
+	const canvas = document.getElementById(canvasId);
+	const context = canvas.getContext("2d");
+	
+	const chartData = {
+		labels: chartLabels,
+		datasets : [{
+			label: 'Dataset Title',
+			data: chartValues,
+			borderColor: 'rgb(255, 99, 132)',
+			backgroundColor: 'transparent',
+		}]
+	};
+
+	const chartOptions = {
+		maintainAspectRatio: false,
+		legend: {
+			display: true,
+		},
+		title: {
+			display: true,
+			text: 'Title for Chart',
+			fontSize: 20,
+		},
+		scales: {
+			xAxes: [{
+				scaleLabel: {
+					display: true,
+					fontSize: 16,
+					labelString: 'Label for X Axes'
+				}
+			}],
+			yAxes: [{
+				scaleLabel: {
+					display: true,
+					fontSize: 16,
+					labelString: 'Lable for Y Axes'
+				}
+			}]
+		}
+	}
+	
+	currentChart = new Chart(context, {
+		type: 'line', 
+		data: chartData,
+		options: chartOptions
+	});	
+
+}
+
+</script>
+
+    </body>
+</html>
