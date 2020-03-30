@@ -121,6 +121,18 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
             </plugin>
+            
+            <!-- https://docs.jboss.org/wildfly/plugins/maven/latest/ -->
+            <!-- The WildFly plugin deploys your war to a local WildFly container -->
+			<!-- To use, run: 	mvn clean package -DskipTests=true
+								mvn wildfly:start
+							 	mvn wildfly:deploy -DskipTests=true 
+			-->
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>${version.wildfly-maven-plugin}</version>
+			</plugin>
         </plugins>
     </build>
 </project>
