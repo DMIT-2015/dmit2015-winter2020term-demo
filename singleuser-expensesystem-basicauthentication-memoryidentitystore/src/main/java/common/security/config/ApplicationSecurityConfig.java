@@ -2,6 +2,8 @@ package common.security.config;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
+import javax.security.enterprise.authentication.mechanism.http.CustomFormAuthenticationMechanismDefinition;
+import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
 
 import org.glassfish.soteria.identitystores.annotation.Credentials;
 import org.glassfish.soteria.identitystores.annotation.EmbeddedIdentityStoreDefinition;
@@ -17,6 +19,14 @@ import org.glassfish.soteria.identitystores.annotation.EmbeddedIdentityStoreDefi
 @BasicAuthenticationMechanismDefinition(
 	realmName = "jaspitest"
 )
+
+//@CustomFormAuthenticationMechanismDefinition(
+//	loginToContinue = @LoginToContinue(
+//		loginPage="/login/login.html", 
+//		useForwardToLogin = false,
+//		errorPage=""
+//	)
+//)
 
 @ApplicationScoped
 public class ApplicationSecurityConfig {

@@ -30,6 +30,9 @@
 	      <li class="nav-item active">
 	        <a class="nav-link" href="/expense/create.html">New </a>
 	      </li>
+	       <li class="nav-item ">
+	        <a class="nav-link" href="/LogoutServlet">Logout {{ username }}</span></a>
+	      </li>
 	    </ul>
 	  </div>
 	</nav>
@@ -38,6 +41,14 @@
     
     <div v-if="message" v-html="message" id="message" class="alert alert-info" role="alert" >
 	</div>
+	
+	<div v-if="messages.length > 0" class="alert alert-danger" role="alert" >
+		<ul >
+			<li v-for="singleMessage in messages.length">
+				{{ singleMessage }}
+			</li>
+		</ul>
+ 	</div>
 
 	<form v-on:submit.prevent>
 	  <div class="form-group">
@@ -140,13 +151,25 @@ var app = new Vue({
 				if (response.ok) {
 					return response.headers.get('Location');
 				} else {
-					throw Error(response.statusText);
+					return response.text()
+					.then(text => {
+						console.log('response text: ' + text);
+						//throw Error(text);
+						
+						let error = Object.assign({message: text}, {
+							status: response.status,
+							statusText: response.statusText
+						})
+						return Promise.reject(error)
+						
+					});
+					
 				}
 			})		
 			.then(location => {
 				console.log(location);
 
-				this.message = 'Create new expense was succssful.';
+				this.message = 'Create new expense was successful.';
 				this.form.date = new Intl.DateTimeFormat('en-CA', {year: 'numeric', month: 'numeric', day: 'numeric'}).format( new Date() );
 				this.form.description = '';
 				this.form.amount = 1;
@@ -154,12 +177,6 @@ var app = new Vue({
 			})
 			.catch(error => {
 				this.message = error;
-				if (error.status == 400) {
-					for (let index = 0; index < Object.keys(error).length - 2; index++) {
-						console.log(error[index]);		
-						this.messages.push( Object.values(error[index])[0] );
-					}
-				}
 			});	
 			
 		},

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <title>Login Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#563d7c">
+     
+     	<!-- Bootstrap (https://getbootstrap.com/) CSS -->
+		<link rel="stylesheet" 
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+			integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
+			crossorigin="anonymous">
+			
+		 <style>
+		      .bd-placeholder-img {
+		        font-size: 1.125rem;
+		        text-anchor: middle;
+		        -webkit-user-select: none;
+		        -moz-user-select: none;
+		        -ms-user-select: none;
+		        user-select: none;
+		      }
+		
+		      @media (min-width: 768px) {
+		        .bd-placeholder-img-lg {
+		          font-size: 3.5rem;
+		        }
+		      }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+}
+.form-signin .checkbox {
+  font-weight: 400;
+}
+.form-signin .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+		      
+   	 	</style>	
+    </head>
+    
+    <body>
+    
+<div id="app" class="container">
+           
+
+	<form ref="form" v-on:submit.prevent
+		class="form-signin" action="/LoginServlet" method="POST" >
+		<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+	    <div v-if="message" v-html="message" id="message" class="alert alert-danger" role="alert" >
+		</div>
+
+		<label for="j_username" class="sr-only">Username</label>
+		<input v-model="form.username" 
+			type="text" id="j_username" name="j_username" class="form-control" placeholder="Username" required autofocus>
+		<label for="j_password" class="sr-only">Password</label>
+		<input v-model="form.password" 
+			type="password" id="j_password" name="j_password" class="form-control" placeholder="Password" required>
+		<button @click="submit"
+			class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+	</form>
+  
+</div>
+
+
+<!-- Bootstrap Dependencies -->	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<!-- Vue.js Dependencies -->
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- production version, optimized for size and speed -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+
+<!-- Vuex Statement Management (https://vuex.vuejs.org) -->
+<script src="https://unpkg.com/vuex"></script>
+
+<!-- Vue Router (https://router.vuejs.org/) -->
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+
+<script type="text/javascript">
+
+var app = new Vue({
+	// The element for Vue to control
+	el: '#app',					
+	
+	// A list of variables separated by a comma to use with Vue
+	// A variable consists of a name followed by a colon and an initial javascript value (string, array, number, true/false)
+    data: {
+        message:	'',
+        //messages:	[],
+        form: {
+			username: '',
+			password: '',
+        },
+       
+    },
+
+     // Vue LifeCyle Hooks methods that you can define: created, mounted, updated, destroyed
+     mounted: function() {
+    	// code to execute when Vue is mounted such as fetching data when page loads
+     	console.log('mounted');
+     	//console.log(this.$route.params.error);
+     	let uri = window.location.search.substring(1); 
+        let params = new URLSearchParams(uri);
+		if (params.get('error')) {
+			this.message = params.get('error');
+		}
+        //console.log(params.get("error"));
+     },
+     
+     // A list of methods separated by comma to use with Vue.
+     // The syntax to define a method is:	
+   	 //		methodName: function(param1, param2) {},
+     methods: {
+    	 
+		submit: function() {
+			const apiURL = '/LoginServlet';	
+
+			// 1) To send data as "application/x-www-form-urlencoded" content type you need to pass a URLSearchParmas object or a URL-encoded string
+			/*
+			const requestData = new URLSearchParams();
+			for (const pair of new FormData(this.$refs.form)) {
+				requestData.append(pair[0], pair[1]);
+			}
+			*/
+			const formData = new FormData();
+			formData.append('j_username', encodeURIComponent(this.form.username));
+			formData.append('j_password', encodeURIComponent(this.form.password));
+			const requestData = new URLSearchParams(formData);	
+			
+			const requestOptions = {
+				method: 'POST',
+				body: requestData,
+			}
+			
+			fetch(apiURL, requestOptions)
+			.then(response => {
+				if (response.ok) {
+					return response.json()
+					.then(data => {
+						console.log(data);
+
+						// store the Authorization to local storage
+						localStorage.setItem("Authorization", data.Authorization);
+						//localStorage.setItem("username", data.username);
+						
+						window.location.href = "/index.html";
+					})
+					.catch(error => {
+						window.location.replace("/index.html");
+					});
+				} else {
+					console.log(response);
+					return response.json().then(data => {
+						throw Error(data.message);
+					})
+					.catch(error => {
+						console.log(error);
+						this.message = error;		
+					});
+				}
+			})	
+			.catch(error => {
+				console.log(error);
+				this.message = error;		
+			});	
+			
+		},
+
+		cancel: function() {
+
+		},
+     	
+     },
+})
+
+</script>
+
+    </body>
+</html>
