@@ -15,16 +15,52 @@
     <body>
     
 <div id="app" class="container">
-        
-    <h1>New Expense</h1>
+   
+   	<nav class="navbar navbar-expand navbar-dark bg-dark">
+	  <a class="navbar-brand" href="/index.html">DMIT2015</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	
+	  <div class="collapse navbar-collapse" id="navbarsExample02">
+	    <ul class="navbar-nav mr-auto">
+	      <li class="nav-item ">
+	        <a class="nav-link" href="/expense/list.html">List </span></a>
+	      </li>
+	      <li class="nav-item active">
+	        <a class="nav-link" href="/expense/create.html">New </a>
+	      </li>
+	    </ul>
+	  </div>
+	</nav>
+	     
+    <h1>New Expense Details</h1>
     
-    <div v-if="message" v-html="message" id="message" class="alert alert-success" role="alert" >
+    <div v-if="message" v-html="message" id="message" class="alert alert-info" role="alert" >
 	</div>
 
-	<button v-on:click="submit()"
-		type="button" class="btn btn-primary">Submit</button>
-
-   	
+	<form v-on:submit.prevent>
+	  <div class="form-group">
+	    <label for="date">Date</label>
+	    <input v-model="form.date"
+	    	type="date" class="form-control" id="date" >
+	  </div>
+	  <div class="form-group">
+	    <label for="description">Description</label>
+	    <input v-model="form.description"
+	    	type="text" class="form-control" id="description" autofocus>
+	  </div>
+	  <div class="form-group">
+	    <label for="amount">Amount</label>
+	    <input v-model="form.amount"
+	    	type="number" class="form-control" id="amount">
+	  </div>
+	  <div class="form-group">
+	  	<button v-on:click="submit"
+	  		type="submit" class="btn btn-primary">Submit New</button>
+	  </div>	  
+	</form>
+	   	
 		   
 </div>
 
@@ -40,6 +76,13 @@
 <!-- production version, optimized for size and speed -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 
+<!-- Vuex Statement Management (https://vuex.vuejs.org) -->
+<script src="https://unpkg.com/vuex"></script>
+
+<!-- Vue Router (https://router.vuejs.org/) -->
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+
 <script type="text/javascript">
 
 var app = new Vue({
@@ -50,41 +93,71 @@ var app = new Vue({
 	// A variable consists of a name followed by a colon and an initial javascript value (string, array, number, true/false)
     data: {
         message:	'',
-        //messages:	[],
+        messages:	[],
+        form: {
+			date: new Intl.DateTimeFormat('en-CA', {year: 'numeric', month: 'numeric', day: 'numeric'}).format( new Date() ),
+			description: '',
+			amount: 1,
+        },
        
     },
 
      // Vue LifeCyle Hooks methods that you can define: created, mounted, updated, destroyed
      mounted: function() {
     	// code to execute when Vue is mounted such as fetching data when page loads
-     	
      },
      
      // A list of methods separated by comma to use with Vue.
      // The syntax to define a method is:	
    	 //		methodName: function(param1, param2) {},
      methods: {
-    	 
+        
 		submit: function() {
-			const apiURL = '/webapi/expenses';
-			
-			fetch(apiURL, {
-				method: 'POST',	// method can be one of the following: POST, GET, PUT, DELETE
-				//body: data
-			})
-			.then(response => {
-				this.message = 'Create expense was successful.';
-				//console.log('Create expense was successful.');
-				//console.log(responseJson);
+			const apiURL = '/webapi/expenses';	
 
-				// do something with the response data
+			const data = {
+				date: this.form.date,
+				description: this.form.description,
+				amount: this.form.amount
+			}
+			console.log(data);
+			console.log(JSON.stringify(data));
+
+			const encodedCredentails = window.btoa('user2015:Password2015');
+			const basicAuth = `Basic ${encodedCredentails}`;
+			console.log(basicAuth);
+			const requestOptions = {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': basicAuth,	
+				},
+				body: JSON.stringify(data),	// convert Javascript object to a JSON message		
+			}
+			
+			fetch(apiURL, requestOptions)
+			.then(response => {
+				if (response.ok) {
+					return response.headers.get('Location');
+				} else {
+					throw Error(response.statusText);
+				}
+			})		
+			.then(location => {
+				console.log(location);
+
+				this.message = 'Create new expense was succssful.';
+				this.form.date = new Intl.DateTimeFormat('en-CA', {year: 'numeric', month: 'numeric', day: 'numeric'}).format( new Date() );
+				this.form.description = '';
+				this.form.amount = 1;
+				
 			})
 			.catch(error => {
-				// for display error messages from a BadRequest response
+				this.message = error;
 				if (error.status == 400) {
 					for (let index = 0; index < Object.keys(error).length - 2; index++) {
 						console.log(error[index]);		
-						this.errorMessages.push( Object.values(error[index])[0] );
+						this.messages.push( Object.values(error[index])[0] );
 					}
 				}
 			});	
