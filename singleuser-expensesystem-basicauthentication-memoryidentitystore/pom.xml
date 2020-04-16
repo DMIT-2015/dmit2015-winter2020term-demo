@@ -40,11 +40,11 @@
 
     <dependencies>
     	
-    	<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.10.3</version>
-		</dependency>
+<!--     	<dependency> -->
+<!-- 			<groupId>com.fasterxml.jackson.datatype</groupId> -->
+<!-- 			<artifactId>jackson-datatype-jsr310</artifactId> -->
+<!-- 			<version>2.10.3</version> -->
+<!-- 		</dependency> -->
 		
     	<dependency>
 			<groupId>org.glassfish.soteria</groupId>
@@ -115,6 +115,23 @@
 			<version>${mockito-core.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- JSON-B API for Integration Testing-->
+		<dependency>
+		    <groupId>org.eclipse</groupId>
+		    <artifactId>yasson</artifactId>
+		    <version>1.0.6</version>
+		    <scope>test</scope>
+		</dependency>
+
+		<!-- JSON P Provider for Integration Testing -->
+		<dependency>
+		    <groupId>org.glassfish</groupId>
+		    <artifactId>jakarta.json</artifactId>
+		    <version>1.1.6</version>
+		    <scope>test</scope>
+		</dependency>
+
     </dependencies>
 
     <build>

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,17 +17,31 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+//import com.fasterxml.jackson.annotation.JsonFormat;
+//import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+//import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+//import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+//import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+//import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+//import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+//import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import lombok.Getter;
 import lombok.Setter;
+
+/**
+ * JAX-RS implementation (RESTEasy) will use Jackson instead of the Jakarata JSON Binding API (JSON-B) for the JSON provider 
+ * if a Jackson dependency is detected in pom.xml so either remove all dependencies on Jackson
+ * in pom.xml OR use the Jackson annotations @JsonSerialize/@JsonDeserialize/@JsonFormat to serialize/deserialize
+ * LocalDateTime, LocalDate, or LocalTime data types.
+ * 
+ * The @JsonbDateFormat annotation is only used when JSON-B is used as the JSON provider.
+ * 
+ * To parse a 12-hour clock you must set the locale to US (CANADA will not work).
+ * 
+ * @author samwu
+ *
+ */
 
 @Entity
 @Table(name="singleuser_expense")
@@ -47,18 +62,19 @@ public class Expense implements Serializable {
 	@DecimalMin(value = "1.00", message = "Amount must be equal to greater than ${value}")
 	private BigDecimal amount;
 	
-	@JsonSerialize(using = LocalDateSerializer.class)
-	@JsonDeserialize(using = LocalDateDeserializer.class)
-	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd")
+//	@JsonSerialize(using = LocalDateSerializer.class)
+//	@JsonDeserialize(using = LocalDateDeserializer.class)
+//	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd")
 	@Column(nullable = false)
 	@NotNull(message = "Date is required")
 	@PastOrPresent(message = "Date cannot be in the future")
 	private LocalDate date = LocalDate.now();
 	
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd HH:mm")	// 24-hour clock works with all locale
+//	@JsonSerialize(using = LocalDateTimeSerializer.class)
+//	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+//	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd HH:mm")	// 24-hour clock works with all locale
 //	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd h:mm a", locale = "US")	// 12-hour works with US locale (CANADA will not work)
+	@JsonbDateFormat(value = "yyyy-MM-dd h:mm a", locale = "US")
 	@Column(nullable = false)
 	private LocalDateTime dateCreated;
 	
