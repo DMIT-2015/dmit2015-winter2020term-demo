@@ -57,7 +57,8 @@ public class Expense implements Serializable {
 	
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd h:mm a")
+	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd HH:mm")	// 24-hour clock works with all locale
+//	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd h:mm a", locale = "US")	// 12-hour works with US locale (CANADA will not work)
 	@Column(nullable = false)
 	private LocalDateTime dateCreated;
 	
