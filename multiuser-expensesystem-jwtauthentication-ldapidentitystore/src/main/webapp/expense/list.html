@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <title>Expense List</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     
+     	<!-- Bootstrap (https://getbootstrap.com/) CSS -->
+		<link rel="stylesheet" 
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+			integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
+			crossorigin="anonymous">
+    </head>
+    
+    <body>    
+	
+<div id="app" class="container">
+    
+  	<nav class="navbar navbar-expand navbar-dark bg-dark">
+	  <a class="navbar-brand" href="/index.html">DMIT2015</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	
+	  <div class="collapse navbar-collapse" id="navbarsExample02">
+	    <ul class="navbar-nav mr-auto">
+	      <li class="nav-item active">
+	        <a class="nav-link" href="/expense/list.html">List Expenses</span></a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="/expense/create.html">New Expense</a>
+	      </li>
+	       <li class="nav-item ">
+	        <a class="nav-link" href="/LogoutServlet">Logout {{ username }}</span></a>
+	      </li>
+	    </ul>
+	  </div>
+	</nav>
+   
+        
+    <h1>Expense List</h1>
+    
+    <div v-if="message" v-html="message" id="message" class="alert alert-info" role="alert" >
+	</div>
+
+	<table  id="expenseTable" class="table table-sm table-striped table-hover" >
+	    <thead>
+	        <tr>
+	            <th>ID</th>
+	            <th>Created on</th>
+	            <th>Date</th>
+	            <th>Description</th>
+	            <th class="text-right">Amount</th>
+	            <th>Command</th>
+	    </thead>
+	    <tbody>
+	        <tr v-for="singleResult in resultList">
+	            <td>{{ singleResult.id }}</td>
+	            <td>{{ singleResult.dateCreated }}</td>
+	            <td>{{ singleResult.date | dateFormat }}</td>
+	            <td>{{ singleResult.description }}</td>
+	            <td class="text-right">{{ singleResult.amount | currencyFormat }}</td>
+	            <td><button v-on:click="deleteItem( singleResult.id )"  
+	            		type="button" class="btn btn-link" >
+	            		delete
+	            	</button>
+	            </td>
+	        </tr>
+	    </tbody>
+	</table> 
+			   
+</div>
+
+
+<!-- Bootstrap Dependencies -->	
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>	
+
+<!-- Vue.js Dependencies -->
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- production version, optimized for size and speed -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+
+<!-- Vuex Statement Management (https://vuex.vuejs.org) -->
+<script src="https://unpkg.com/vuex"></script>
+
+<!-- Vue Router (https://router.vuejs.org/) -->
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+<script type="text/javascript">
+
+var app = new Vue({
+	// The element for Vue to control
+	el: '#app',					
+	
+	// A list of variables separated by a comma to use with Vue
+	// A variable consists of a name followed by a colon and an initial javascript value (string, array, number, true/false)
+    data: {
+        message:	'',
+        messages:	[],
+        resultList: [],
+       
+    },
+	
+    filters: {	// filters are functions that are used to format data values.
+		currencyFormat(value) {
+			return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(value);
+		},
+
+		dateFormat(value) {
+			let today = new Date(value);
+			today.setDate(today.getDate() + 1);
+			const options = {year: 'numeric', month: 'long', day: 'numeric'};
+			return new Intl.DateTimeFormat('en-CA', options).format( new Date(today) );
+		},
+    },
+    
+     // Vue LifeCyle Hooks methods that you can define: created, mounted, updated, destroyed
+     mounted: function() {
+    	// code to execute when Vue is mounted such as fetching data when page loads
+     	this.fetchData();
+     },
+     
+     // A list of methods separated by comma to use with Vue.
+     // The syntax to define a method is:	
+   	 //		methodName: function(param1, param2) {},
+     methods: {
+         
+    	fetchData: function() {
+    		const apiURL = '/webapi/expenses';	
+    		fetch(apiURL, {
+				method: 'GET',	// method can be one of the following: POST, GET, PUT, DELETE
+			})
+			.then(response => {
+				if (response.ok) {
+					return response.json();	// The json() method of the Body mixin takes a Response stream and reads it to completion. 
+					 						// It returns a promise that resolves with the result of parsing the body text as JSON.
+				} else {
+					throw Error(response.statusText);
+				}
+			})		
+			.then(data => {
+				console.log(data);
+				// do something with the response data
+				this.resultList = data;
+
+				
+			})
+			.catch(error => {
+				this.message = error;
+			});
+        },
+
+        deleteItem: function(id) {
+			const confirmed = confirm(`Are you sure, you want to expenseId ${id} ?`);
+			if (confirmed) {
+				const apiURL = `/webapi/expenses/${id}`;
+
+				const encodedCredentails = window.btoa('user2015:Password2015');
+				const basicAuth = `Basic ${encodedCredentails}`;
+				console.log(basicAuth);
+				const requestOptions = {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': basicAuth,	
+					},
+				}
+				
+				fetch(apiURL, requestOptions)
+				.then(response => {
+					if (response.ok) {
+						this.message = 'Delete was successful';
+						//this.fetchData();
+
+						const index = this.resultList.findIndex(e => e.id === id);
+						this.resultList.splice(index,1);
+
+						
+					} else {
+						this.message = 'Delete was not successful.'
+					}
+				})		
+				.catch(error => {
+					this.message = error;
+				});
+			}
+        },
+        
+		submit: function() {
+			
+		},
+
+		cancel: function() {
+
+		},
+     	
+     },
+})
+
+
+// common function to handle a BadRequest response from a Fetch API request
+function handleResponse(response) {
+	return response.json()
+		.then(json => {
+			if (response.ok) {
+				return json
+			} else {
+				let error = Object.assign({}, json, {
+					status: response.status,
+					statusText: response.statusText
+				})
+				return Promise.reject(error)
+			}
+	})
+}
+</script>
+
+    </body>
+</html>

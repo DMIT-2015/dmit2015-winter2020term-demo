@@ -1,0 +1,73 @@
+<?xm	l version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+	version="4.0">
+	
+	<display-name>multiuser-expensesystem-jwtauthentication-ldapidentitystore</display-name>
+	
+	<context-param>
+		<param-name>ldap.server</param-name>
+		<param-value>192.168.101.10</param-value>
+	</context-param>
+	<context-param>
+		<param-name>ldap.bind.name</param-name>
+		<param-value>cn=DMIT2015 Student,ou=Software Developer,ou=JobRole,dc=classicmodelcars,dc=com</param-value>
+	</context-param>
+	<context-param>
+		<param-name>ldap.bind.password</param-name>
+		<param-value>Password2015</param-value>
+	</context-param>
+	<context-param>
+		<param-name>ldap.search.dn</param-name>
+		<param-value>ou=JobRole,dc=classicmodelcars,dc=com</param-value>
+	</context-param>
+	
+	
+	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- To use security role annotations with Wildfly, 
+	you MUST set to "true" the context-param "resteasy.role.based.security" -->
+	<context-param>
+        <param-name>resteasy.role.based.security</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+	<security-constraint>
+		<display-name>Use HTTPS only</display-name>
+		<web-resource-collection>
+			<web-resource-name>sslResources</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	
+	<security-role>
+		<role-name>Sales Rep</role-name>
+	</security-role>    
+	<security-role>
+		<role-name>Sales Manager</role-name>
+	</security-role>    
+	<security-role>
+		<role-name>Executive</role-name>
+	</security-role>    
+	<security-role>
+		<role-name>Software Developer</role-name>
+	</security-role>    
+	
+	<error-page>
+		<error-code>401</error-code>
+		<location>/login/login.html</location>
+	</error-page>
+	
+</web-app>
