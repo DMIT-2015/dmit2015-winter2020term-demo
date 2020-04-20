@@ -31,7 +31,7 @@
 	        <a class="nav-link" href="/expense/create.html">New Expense</a>
 	      </li>
 	       <li class="nav-item ">
-	        <a class="nav-link" href="/LogoutServlet">Logout {{ username }}</span></a>
+	        <a type="button" class="nav-link" v-on:click="logout">Logout {{ username }}</span></a>
 	      </li>
 	    </ul>
 	  </div>
@@ -200,13 +200,25 @@ var app = new Vue({
 			}
         },
         
-		submit: function() {
-			
-		},
+        logout: function() {
+			const apiURL = '/LogoutServlet';	
+    		fetch(apiURL, {
+				method: 'GET',	// method can be one of the following: POST, GET, PUT, DELETE
+			})
+			.then(response => {
+				if (response.ok) {
+					sessionStorage.clear();
+					window.location.href = "/index.html";
+				} else {
+					throw Error(response.statusText);
+				}
+			})		
+			.catch(error => {
+				this.message = error;
+			});
 
-		cancel: function() {
-
 		},
+		
      	
      },
 })
