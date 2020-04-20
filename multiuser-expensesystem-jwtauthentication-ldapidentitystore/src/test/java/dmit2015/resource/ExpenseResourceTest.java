@@ -6,8 +6,6 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -253,6 +251,7 @@ class ExpenseResourceTest {
 		Response jwtResponse = jwtResource.request().post(entity);
 		assertEquals(Status.OK.getStatusCode(), jwtResponse.getStatus());
 		String bearerToken = jwtResponse.readEntity(String.class);
+		System.out.println(bearerToken);
 		jwtResponse.close();
 	}
 	

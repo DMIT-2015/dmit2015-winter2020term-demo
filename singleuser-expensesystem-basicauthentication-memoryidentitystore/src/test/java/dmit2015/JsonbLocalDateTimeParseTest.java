@@ -35,7 +35,7 @@ public class JsonbLocalDateTimeParseTest {
 
 	@Test
 	public void shouldParse24HoursLocalTime() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 		LocalTime time = LocalTime.parse("15:08", formatter);
 		
 		Jsonb jsonb = JsonbBuilder.create();
