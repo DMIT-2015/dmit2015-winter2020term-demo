@@ -64,10 +64,6 @@ curl -i -k -X POST https://localhost:8443/webapi/expenses \
  -u user2015:Password2015
  
 curl -i -k -X POST https://localhost:8443/webapi/expenses/form \
- 	-d 'description=April%204%20Item&amount=4.44&date=2020-04-04' \
-	-H 'Content-Type:application/x-www-form-urlencoded' \
- 	-u user2015:Password2015
-curl -i -k -X POST https://localhost:8443/webapi/expenses/form \
  	--data-urlencode 'description=April 5 Item' \
  	-d 'amount=5.55' \
  	-d 'date=2020-04-05' \

@@ -45,6 +45,26 @@
 	</properties>
 
     <dependencies>
+    	
+    	<dependency>
+		    <groupId>org.jboss.resteasy</groupId>
+		    <artifactId>resteasy-client</artifactId>
+		    <version>4.5.3.Final</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.jboss.resteasy</groupId>
+		    <artifactId>resteasy-json-p-provider</artifactId>
+		    <version>4.5.3.Final</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.jboss.resteasy</groupId>
+		    <artifactId>resteasy-json-binding-provider</artifactId>
+		    <version>4.5.3.Final</version>
+		    <scope>test</scope>
+		</dependency>
+    	
     
     	<dependency>
 		    <groupId>org.jasypt</groupId>
