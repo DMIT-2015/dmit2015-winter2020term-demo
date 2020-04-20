@@ -116,6 +116,13 @@ var app = new Vue({
      // Vue LifeCyle Hooks methods that you can define: created, mounted, updated, destroyed
      mounted: function() {
     	// code to execute when Vue is mounted such as fetching data when page loads
+     	this.username = sessionStorage.getItem("username");
+		console.log('username: ' + this.username);
+
+		this.bearerAuth = sessionStorage.getItem("BearerAuth");
+		if (!this.bearerAuth) {
+			window.location.href = "/login/login.html";
+		}
      },
      
      // A list of methods separated by comma to use with Vue.
@@ -131,17 +138,12 @@ var app = new Vue({
 				description: this.form.description,
 				amount: this.form.amount
 			}
-			console.log(data);
-			console.log(JSON.stringify(data));
 
-			const encodedCredentails = window.btoa('user2015:Password2015');
-			const basicAuth = `Basic ${encodedCredentails}`;
-			console.log(basicAuth);
 			const requestOptions = {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'Authorization': basicAuth,	
+					'Authorization': this.bearerAuth,	
 				},
 				body: JSON.stringify(data),	// convert Javascript object to a JSON message		
 			}

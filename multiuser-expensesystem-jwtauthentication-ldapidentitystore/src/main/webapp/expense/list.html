@@ -121,6 +121,14 @@ var app = new Vue({
      mounted: function() {
     	// code to execute when Vue is mounted such as fetching data when page loads
      	this.fetchData();
+
+     	this.username = sessionStorage.getItem("username");
+		console.log('username: ' + this.username);
+
+		this.bearerAuth = sessionStorage.getItem("BearerAuth");
+		if (!this.bearerAuth) {
+			window.location.href = "/login/login.html";
+		}
      },
      
      // A list of methods separated by comma to use with Vue.
@@ -158,14 +166,17 @@ var app = new Vue({
 			if (confirmed) {
 				const apiURL = `/webapi/expenses/${id}`;
 
-				const encodedCredentails = window.btoa('user2015:Password2015');
-				const basicAuth = `Basic ${encodedCredentails}`;
-				console.log(basicAuth);
+				const bearerAuth = sessionStorage.getItem("BearerAuth");
+				if (!this.bearerAuth) {
+					window.location.href = "/login/login.html";
+				}
+				console.log(bearerAuth);
+				
 				const requestOptions = {
 					method: 'DELETE',
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': basicAuth,	
+						'Authorization': bearerAuth,	
 					},
 				}
 				

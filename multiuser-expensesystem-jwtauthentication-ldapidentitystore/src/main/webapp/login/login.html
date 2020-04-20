@@ -154,40 +154,39 @@ var app = new Vue({
      methods: {
     	 
 		submit: function() {
-			const apiURL = '/LoginServlet';	
+			const apiURL = '/webapi/jwt/formLogin';	
 
-			// 1) To send data as "application/x-www-form-urlencoded" content type you need to pass a URLSearchParmas object or a URL-encoded string
-			/*
-			const requestData = new URLSearchParams();
-			for (const pair of new FormData(this.$refs.form)) {
-				requestData.append(pair[0], pair[1]);
-			}
-			*/
 			const formData = new FormData();
-			formData.append('j_username', encodeURIComponent(this.form.username));
-			formData.append('j_password', encodeURIComponent(this.form.password));
+			formData.append('j_username', this.form.username);
+			formData.append('j_password', this.form.password);
 			const requestData = new URLSearchParams(formData);	
 			
 			const requestOptions = {
 				method: 'POST',
 				body: requestData,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
 			}
 			
 			fetch(apiURL, requestOptions)
 			.then(response => {
 				if (response.ok) {
-					return response.json()
+					console.log('login ok');
+					return response.text()
 					.then(data => {
 						console.log(data);
 
 						// store the Authorization to local storage
-						localStorage.setItem("Authorization", data.Authorization);
-						//localStorage.setItem("username", data.username);
+						//localStorage.setItem("Bearer", data);
+						sessionStorage.setItem("BearerAuth", 'Bearer ' + data);						
+						sessionStorage.setItem("username", this.form.username);
 						
-						window.location.href = "/index.html";
+						window.location.replace("/expense/create.html");						
 					})
 					.catch(error => {
-						window.location.replace("/index.html");
+						console.log(error);
+						this.message = error;
 					});
 				} else {
 					console.log(response);
