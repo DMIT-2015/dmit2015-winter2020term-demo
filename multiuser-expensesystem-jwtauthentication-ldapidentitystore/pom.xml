@@ -14,24 +14,24 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<jakarta.jakartaee-api.version>8.0.0</jakarta.jakartaee-api.version>
-		<microprofile.version>3.0</microprofile.version>
-		<mockito-core.version>3.1.0</mockito-core.version>
-		<junit-jupiter.version>5.5.0</junit-jupiter.version>
+		<jakarta.jakartaee-api.version>9.1.0</jakarta.jakartaee-api.version>
+		<microprofile.version>5.0</microprofile.version>
+		<mockito-core.version>4.6.1</mockito-core.version>
+		<junit-jupiter.version>5.8.2</junit-jupiter.version>
 		
 		<!-- Common Language Libraries -->
-		<version.lombok>1.18.12</version.lombok>
+		<version.lombok>1.18.24</version.lombok>
 		<version.eclipse-collections>10.2.0</version.eclipse-collections>
 		<version.commons-math3>3.6.1</version.commons-math3>
-		<version.commons-lang3>3.8.1</version.commons-lang3>
-		<version.commons-io>2.7</version.commons-io>
+		<version.commons-lang3>3.12.0</version.commons-lang3>
+		<version.commons-io>2.11.0</version.commons-io>
 		<version.commons-fileupload>1.4</version.commons-fileupload>
 		<version.zxing>3.4.0</version.zxing>
 		<version.GeographicLib-Java>1.50</version.GeographicLib-Java>
 
 		<!-- JDBC drivers -->
-		<version.h2database>2.1.210</version.h2database>
-		<version.mssql-jdbc>8.2.1.jre11</version.mssql-jdbc>
+		<version.h2database>2.1.212</version.h2database>
+		<version.mssql-jdbc>10.2.1.jre11</version.mssql-jdbc>
 		<version.ojdbc10>19.3.0.0</version.ojdbc10>
 		<version.postgresql>42.2.10</version.postgresql>
 		<version.mysql-connector-java>8.0.19</version.mysql-connector-java>
@@ -39,7 +39,7 @@
 		
 		<!-- Security -->
 		<version.jasypt>1.9.3</version.jasypt>
-		<version.ldap-api>2.0.1</version.ldap-api>
+		<version.ldap-api>2.1.0</version.ldap-api>
 		<version.nimbus-jose-jwt>8.12</version.nimbus-jose-jwt>
 		
 	</properties>
@@ -49,19 +49,19 @@
     	<dependency>
 		    <groupId>org.jboss.resteasy</groupId>
 		    <artifactId>resteasy-client</artifactId>
-		    <version>4.5.7.Final</version>
+		    <version>6.0.1.Final</version>
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>org.jboss.resteasy</groupId>
 		    <artifactId>resteasy-json-p-provider</artifactId>
-		    <version>4.5.3.Final</version>
+		    <version>6.0.1.Final</version>
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>org.jboss.resteasy</groupId>
 		    <artifactId>resteasy-json-binding-provider</artifactId>
-		    <version>4.5.3.Final</version>
+		    <version>4.7.4.Final</version>
 		    <scope>test</scope>
 		</dependency>
     	
@@ -79,7 +79,7 @@
 		<dependency>
 		    <groupId>com.nimbusds</groupId>
 		    <artifactId>nimbus-jose-jwt</artifactId>
-		    <version>${version.nimbus-jose-jwt}</version>
+		    <version>9.7</version>
 		</dependency>
 		
 		<dependency>
