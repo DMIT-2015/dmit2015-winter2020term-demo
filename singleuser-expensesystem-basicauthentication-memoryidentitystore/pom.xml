@@ -30,7 +30,7 @@
 		<version.GeographicLib-Java>1.50</version.GeographicLib-Java>
 
 		<!-- JDBC drivers -->
-		<version.h2database>2.1.210</version.h2database>
+		<version.h2database>2.1.214</version.h2database>
 		<version.mssql-jdbc>8.2.1.jre11</version.mssql-jdbc>
 		<version.ojdbc10>19.3.0.0</version.ojdbc10>
 		<version.postgresql>42.2.10</version.postgresql>
