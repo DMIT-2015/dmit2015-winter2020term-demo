@@ -40,7 +40,7 @@
 		<!-- Security -->
 		<version.jasypt>1.9.3</version.jasypt>
 		<version.ldap-api>2.0.1</version.ldap-api>
-		<version.nimbus-jose-jwt>8.12</version.nimbus-jose-jwt>
+		<version.nimbus-jose-jwt>9.39.3</version.nimbus-jose-jwt>
 		
 	</properties>
 
